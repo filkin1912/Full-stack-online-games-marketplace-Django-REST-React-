@@ -1,0 +1,25 @@
+{% load static %}
+<div class="game">
+    <div class="image-wrap">
+        {% if game.game_picture %}
+            <img src="{{ game.game_picture.url }}" alt="{{ game.title }}">
+        {% else %}
+            <img src="{% static 'images/no-image.jpg' %}" alt="{{ game.title }}">
+        {% endif %}
+    </div>
+    <h3>{{ game.title }}</h3>
+    <h1>{{ game.category }}</h1>
+    <div class="data-buttons">
+        {% if hide_buttons or hide_button_buy %}
+            <!-- Only show Details -->
+            <a href="{% url 'game details' pk=game.pk %}" class="btn btn--details">Details</a>
+        {% else %}
+            <!-- Show Details + Buy -->
+            <a href="{% url 'game details' pk=game.pk %}" class="btn btn--details">Details</a>
+            <a href="{% url 'game buy' pk=game.pk %}" class="btn btn--details">
+                Buy&nbsp;&nbsp;${{ game.price }}
+            </a>
+        {% endif %}
+    </div>
+
+</div>

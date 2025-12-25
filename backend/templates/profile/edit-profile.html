@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load placeholders %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+
+    <p class="no-articles">Edit Profile</p>
+
+    <section id="general-app-container">
+        <form method="post" action="{% url 'profile edit' pk=object.pk %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            {{ form.first_name|placeholder:'First Name:'|attr:"class:form-control" }}
+            {{ form.first_name.errors }}
+
+            {{ form.last_name|placeholder:'Last Name:'|attr:"class:form-control" }}
+            {{ form.last_name.errors }}
+
+            {{ form.email|placeholder:'Email:'|attr:"class:form-control" }}
+            {{ form.email.errors }}
+
+            {{ form.money|placeholder:'Money:'|attr:"class:form-control" }}
+            {{ form.money.errors }}
+
+                    {% if object.profile_picture %}
+                        <div class="profile-picture-wrapper">
+                            <img src="{{ object.profile_picture.url }}" alt="Profile Picture" class="profile-img">
+                        </div>
+                    {% endif %}
+
+                    <input type="file" name="profile_picture" id="id_profile_picture" accept="image/*" class="form-control">
+
+
+            <input class="btn submit" type="submit" value="Save">
+        </form>
+    </section>
+{% endblock %}

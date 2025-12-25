@@ -1,0 +1,9 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <p class="no-articles">Created!</p>
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <a class="btn btn-submit" href="{% url 'index' %}">
+            <input class="btn submit" type="submit" value="Go back">
+        </a>
+    </div>
+{% endblock %}

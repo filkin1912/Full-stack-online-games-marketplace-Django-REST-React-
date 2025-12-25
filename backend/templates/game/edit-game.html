@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/style.css' %}">
+
+<section id="general-app-container">
+    <form method="post" action="{% url 'game edit' pk=game.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h1>Edit Game</h1>
+
+        {{ form.non_field_errors }}
+
+        <!-- Title -->
+        {{ form.title|attr:"class:form-control" }}
+        {{ form.title.errors }}
+
+        <!-- Category -->
+        {{ form.category|attr:"class:form-control" }}
+        {{ form.category.errors }}
+
+        <!-- Price -->
+        {{ form.price|attr:"class:form-control" }}
+        {{ form.price.errors }}
+
+        <!-- Picture field (styled like profile edit) -->
+        {% if game.game_picture %}
+            <div class="profile-picture-wrapper">
+                <img src="{{ game.game_picture.url }}" alt="Game Picture" class="profile-img">
+            </div>
+        {% else %}
+            <div class="profile-picture-wrapper">
+                <img src="{% static 'images/no-image.jpg' %}" alt="Game Picture" class="profile-img">
+            </div>
+        {% endif %}
+
+        <input type="file" name="game_picture" id="id_game_picture" accept="image/*" class="form-control">
+        {{ form.game_picture.errors }}
+
+        <!-- Summary -->
+        {{ form.summary|attr:"class:form-control" }}
+        {{ form.summary.errors }}
+
+        <!-- Submit -->
+        <input class="btn submit" type="submit" value="Edit Game">
+    </form>
+</section>
+{% endblock %}

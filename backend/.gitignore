@@ -1,0 +1,32 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+.env/
+*.venv/
+
+# Django-specific
+db.sqlite3
+*.log
+media/
+staticfiles/
+local_settings.py
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# OS-specific
+Thumbs.db
+# created by virtualenv automatically
+

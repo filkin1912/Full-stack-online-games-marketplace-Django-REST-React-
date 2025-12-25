@@ -1,0 +1,108 @@
+/* ===========================
+   Profile Container
+   =========================== */
+#profile-details {
+    max-width: 784px;
+    margin: 32px auto;
+    border-radius: 10px;
+    background: var(--color-bg);
+    padding: 16px;
+}
+
+/* ===========================
+   Layout Wrapper
+   =========================== */
+.profile-details-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* ===========================
+   Profile Image Block
+   =========================== */
+.profile-picture-block {
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 5%;
+    object-fit: cover;
+    margin-bottom: 8px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+/* ===========================
+   Profile Info Block
+   =========================== */
+.profile-info-block {
+    flex: 1 1 300px;
+    max-width: 500px;
+}
+
+.profile-info-block h1 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+
+.profile-info-block p {
+    font-size: 0.8rem;
+    margin: 4px 0;
+}
+
+/* ===========================
+   Profile Actions
+   =========================== */
+.profile-actions {
+    margin-top: 16px;
+}
+
+.profile-actions .btn {
+    margin: 0;
+}
+
+/* ===========================
+   Edit Mode (Picture + File Input)
+   =========================== */
+.profile-picture-wrapper {
+    margin: 2px 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 16px;
+}
+
+.file-input {
+    flex-shrink: 0;
+    max-width: 160px;
+}
+
+/* ===========================
+   Confirmation Modal
+   =========================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}

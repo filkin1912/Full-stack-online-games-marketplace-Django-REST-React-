@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/alert-messages.css' %}">
+    <title>GamesPlay</title>
+</head>
+<body>
+<div id="box">
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <h1><a class="home" href="{% url 'index' %}">All Games</a></h1>
+
+            {% if request.resolver_match.url_name == 'index' %}
+                <form id="search-form" class="search-bar" method="get" action="">
+                    <input type="text" name="q" placeholder="Search game" class="search-input">
+                    <button type="submit" class="search-btn">GO</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <nav>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'profile logout' %}" class="nav-btn">LogOut</a>
+                <a href="{% url 'bought games' %}" class="nav-btn">Bought games</a>
+                <a href="{% url 'my games' pk=request.user.pk %}" class="nav-btn">My games</a>
+                <a href="{% url 'game create' %}" class="nav-btn">Create Game</a>
+                <a href="{% url 'profile details' pk=request.user.pk %}" class="nav-btn">Profile</a>
+            {% else %}
+                <a href="{% url 'profile login' %}" class="nav-btn">LogIn</a>
+                <a href="{% url 'profile create' %}" class="nav-btn">Create Profile</a>
+            {% endif %}
+        </nav>
+    </header>
+
+
+    <!-- Main container -->
+    <div class="general-app-container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- ✅ Centered Messages Overlay -->
+    {% if messages %}
+        <div class="message-overlay">
+            <div class="message-container">
+                {% for message in messages %}
+                    <div class="custom-message {{ message.tags }}">
+                        <span class="message-text">{{ message }}</span>
+                        <button class="close-button" onclick="this.parentElement.style.display='none';">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
+    <!-- Footer -->
+    {% if request.user.is_authenticated %}
+        <footer>
+            <p>
+                Welcome,
+                {% if profile_user.display_name %}
+                    {{ profile_user.display_name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {% else %}
+                    {{ profile_user.email }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {% endif %}
+            </p>
+            <p class="profile-balance-box">
+                Balance:&nbsp;${{ profile_money|floatformat:2 }}
+            </p>
+        </footer>
+    {% else %}
+        <footer>
+            <p>©Vasil Filkin 2025</p>
+        </footer>
+    {% endif %}
+</div>
+
+<!-- ✅ Auto-dismiss messages after 2 seconds -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const messages = document.querySelectorAll(".custom-message");
+
+        setTimeout(() => {
+            messages.forEach(msg => {
+                msg.classList.add("fade-out");
+                setTimeout(() => msg.style.display = "none", 500);
+            });
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>

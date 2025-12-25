@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+    <section id="create-page" class="auth">
+        <form id="create" method="post" action="{% url 'game edit' pk=game.pk %}">
+            <div class="container">
+
+                {% if bought %}
+                    <h1>{{ message }}</h1>
+                    <h2>Name: {{ game.title }}</h2>
+                    <h2>Price: {{ game.price }}</h2>
+                    <h2>Money left: {{ user.money }}</h2>
+                {% else %}
+                    <h1>{{ message }}</h1>
+                {% endif %}
+
+            </div>
+        </form>
+    </section>
+
+
+{% endblock %}

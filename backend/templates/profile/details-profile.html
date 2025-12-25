@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+
+    <p class="no-articles">Profile Details</p>
+
+    <section id="general-app-container">
+
+        <div class="profile-details-wrapper">
+
+            <!-- Profile Picture -->
+            <div class="profile-picture-block">
+                {% if not object.profile_picture %}
+                    <img class="profile-img" src="{% static 'images/default-user.jpg' %}" alt="profile-image"/>
+                {% else %}
+                    <img class="profile-img" src="{{ object.profile_picture.url }}" alt="profile-image"/>
+                {% endif %}
+            </div>
+
+            <!-- Profile Info -->
+            <div class="profile-info-block">
+
+                {% if object.first_name and object.last_name %}
+                    <h2>{{ object.full_name }}</h2>
+                {% else %}
+                    <h2>No name</h2>
+                {% endif %}
+
+                <p>Email: {{ object.email }}</p>
+
+                {% if object.age %}
+                    <p>Age: {{ object.age }}</p>
+                {% endif %}
+
+                <p>User ID: {{ object.pk }}</p>
+                <p>Money: {{ object.money }}</p>
+                <p>Owned games: {{ games_count }}</p>
+
+                <!-- Profile Actions -->
+                <div class="profile-actions">
+                    <a href="{% url 'profile edit' pk=object.pk %}" class="btn btn--details">Edit</a>
+                    <button class="btn btn--details" onclick="showProfileDeletePopup()">Delete</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ✅ Delete Confirmation Popup -->
+    <div id="profile-delete-popup" class="popup-overlay" style="display: none;">
+        <div class="popup-box">
+            <p>Do you want to delete your profile?</p>
+
+            <form method="post" action="{% url 'profile delete' pk=object.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--submit">Yes</button>
+                <button type="button" class="btn btn--cancel" onclick="hideProfileDeletePopup()">No</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ✅ Popup Logic -->
+    <script>
+        function showProfileDeletePopup() {
+            document.getElementById("profile-delete-popup").style.display = "flex";
+        }
+
+        function hideProfileDeletePopup() {
+            document.getElementById("profile-delete-popup").style.display = "none";
+        }
+    </script>
+
+{% endblock %}

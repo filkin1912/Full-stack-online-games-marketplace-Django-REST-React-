@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: project_dbcontainer
+    environment:
+      POSTGRES_DB: examdb
+      POSTGRES_USER: examuser
+      POSTGRES_PASSWORD: exampass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"   # host:container mapping to avoid conflict with other Postgres
+
+  backend:
+    image: filk1912/gamesplay-backend:latest
+    container_name: gamesplay-backend
+    entrypoint: [ "/app/entrypoint.sh" ]
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+    environment:
+      DJANGO_SECRET_KEY: django-insecure-ol2x@g2v6!n_6jh$5qh-fb$75sdu214da^t=1bq&+7c!($v+cg
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DB_NAME: examdb
+      DB_USER: examuser
+      DB_PASSWORD: exampass
+      DB_HOST: db
+      DB_PORT: "5432"
+
+
+  frontend:
+    image: filk1912/gamesplay-frontend:latest
+    container_name: gamesplay-frontend
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: http://backend:8000
+    command: serve -s build
+
+volumes:
+  postgres_data:

@@ -1,0 +1,32 @@
+/* ===========================
+   CSS Variables (Theme Colors)
+   =========================== */
+:root {
+    --color-primary: #778e9c;
+    --color-primary-hover: #8fa9b9;
+    --color-secondary: #54557b;
+    --color-accent: #fd5454;
+    --color-bg: #ecf0f3;
+    --color-dark: #2a4980;
+    --color-light: #ffffff;
+}
+
+/* ===========================
+   Global Reset
+   =========================== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===========================
+   HTML Defaults
+   =========================== */
+html {
+    font-family: Arial, sans-serif;
+    font-size: 12.8px;
+    line-height: 1.12;
+}

@@ -1,0 +1,119 @@
+/* ===========================
+   Form Page Container
+   =========================== */
+.form-page {
+    max-width: 440px;
+    margin: 1.6em auto;
+    padding: 5px;
+    border-radius: 5px;
+    background: rgba(62, 68, 67, 0.7);
+    box-shadow: 0 0 8px #49535e, -6px -6px 8px #191c21;
+    text-align: center;
+}
+
+/* ===========================
+   Brand Logos
+   =========================== */
+.brand-logo {
+    height: 64px;
+    width: 64px;
+    background: url("../images/loginLogo.png") center/cover no-repeat;
+    margin: auto;
+    border-radius: 50%;
+    box-shadow: 6px 6px 8px #5a6066ba, -6px -6px 8px #6d585845;
+}
+
+.brand-logo1 {
+    height: 64px;
+    width: 64px;
+    background: url("../images/registerLogo.png") center/cover no-repeat;
+    margin: auto;
+    border-radius: 50%;
+    box-shadow: 6px 6px 8px #5a6066ba, -6px -6px 8px #6d585845;
+}
+
+/* ===========================
+   Labels & Controls
+   =========================== */
+label {
+    display: block;
+    margin: 8px 0 4px;
+    font-size: 0.8rem;
+    color: var(--color-light);
+}
+
+.form-control {
+    width: 100%;
+    background: var(--color-bg);
+    padding: 9px 13px;
+    margin-top: 4px;
+    font-size: 1rem;
+    border-radius: 5px;
+    box-shadow: inset 2px 2px 2px #c0c2c5, inset -2px -2px 2px #fff;
+    border: none;
+    outline: none;
+}
+
+textarea.form-control {
+    min-height: 3em;
+    border-radius: 0.46em;
+}
+
+/* ===========================
+   General App Container
+   =========================== */
+#general-app-container {
+    width: 24vw;
+    max-height: 68vh;
+    margin: 2.4rem auto;
+    padding: 16px;
+    overflow-y: auto;
+    background: rgba(62, 68, 67, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 0 26px #49535e, -11px -11px 16px #191c21;
+    text-align: center;
+}
+
+#general-app-container h1 {
+    margin-bottom: 16px;
+    color: var(--color-light);
+}
+
+/* ===========================
+   Buttons
+   =========================== */
+.btn {
+    display: inline-block;
+    padding: 0.64em 1.12em;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+.btn:hover {
+    opacity: 1;
+}
+
+.btn--submit {
+    background: var(--color-primary);
+    color: var(--color-light);
+}
+
+.btn--submit:hover {
+    background: var(--color-primary-hover);
+}
+
+.btn--upload {
+    background: var(--color-primary);
+    color: var(--color-light);
+    font-size: 0.72rem;
+    transform: scale(1.1);
+}
+
+.btn--upload:hover {
+    background: var(--color-primary-hover);
+}

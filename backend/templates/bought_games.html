@@ -1,0 +1,127 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+
+    {% if not bought_games %}
+        <p class="no-articles">No bought games yet</p>
+    {% else %}
+
+        <!-- ✅ Header Row: Title + Total Spent -->
+        <div class="bought-header-wrapper">
+            <div class="bought-header-row">
+                <p class="no-articles no-articles--welcome">BOUGHT GAMES</p>
+                <p class="total-spent-box">Total spent: <strong>${{ total_spent|floatformat:2 }}</strong></p>
+            </div>
+        </div>
+
+
+        <!-- ✅ Per Page Selector -->
+        <form method="get" class="per-page-form">
+            {% if sort %}
+                <input type="hidden" name="sort" value="{{ sort }}">
+            {% endif %}
+            <label for="per_page">Show per page:</label>
+            <select name="per_page" id="per_page" onchange="this.form.submit()">
+                {% for option in per_page_options %}
+                    <option value="{{ option }}" {% if per_page == option %}selected{% endif %}>
+                        {{ option }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <!-- ✅ Sort Selector -->
+        <form method="get" class="sort-form">
+            {% if per_page %}
+                <input type="hidden" name="per_page" value="{{ per_page }}">
+            {% endif %}
+            <label for="sort">Sort by:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+                <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                <option value="price" {% if sort == 'price' %}selected{% endif %}>Price</option>
+            </select>
+        </form>
+
+        <!-- ✅ Game Grid -->
+        <div class="game-grid-wrapper">
+            <section id="welcome-world" class="game-grid">
+                {% for bought_game in bought_games %}
+                    {% with game=bought_game.game %}
+                        {% include 'game/partials/game-card.html' %}
+                    {% endwith %}
+                {% endfor %}
+            </section>
+        </div>
+
+        <!-- ✅ Paginator -->
+        <div class="fixed-paginator">
+
+        <span class="page-range">
+            {{ page_obj.start_index }} – {{ page_obj.end_index }} of {{ page_obj.paginator.count }}
+        </span>
+
+            <div class="page-controls">
+
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if per_page %}&per_page={{ per_page }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                       class="page-btn">&laquo;</a>
+
+                    <a href="?page=
+
+                            {{ page_obj.previous_page_number }}{% if per_page %}&per_page={{ per_page }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                       class="page-btn">&lsaquo;</a>
+                {% else %}
+                    <span class="page-btn disabled">&laquo;</span>
+                    <span class="page-btn disabled">&lsaquo;</span>
+                {% endif %}
+
+                {% with total=page_obj.paginator.num_pages current=page_obj.number %}
+                    {% with start=current|add:"-2" end=current|add:"2" %}
+
+                        {% if start < 1 %}
+                            {% with start=1 end=5 %}{% endwith %}
+                        {% endif %}
+
+                        {% if end > total %}
+                            {% with end=total start=total|add:"-4" %}{% endwith %}
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if num >= start and num <= end %}
+                                {% if page_obj.number == num %}
+                                    <span class="page-btn current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page=
+
+                                            {{ num }}{% if per_page %}&per_page={{ per_page }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                                       class="page-btn">{{ num }}</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                    {% endwith %}
+                {% endwith %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page=
+
+                            {{ page_obj.next_page_number }}{% if per_page %}&per_page={{ per_page }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                       class="page-btn">&rsaquo;</a>
+
+                    <a href="?page=
+
+                            {{ page_obj.paginator.num_pages }}{% if per_page %}&per_page={{ per_page }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}"
+                       class="page-btn">&raquo;</a>
+                {% else %}
+                    <span class="page-btn disabled">&rsaquo;</span>
+                    <span class="page-btn disabled">&raquo;</span>
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% endif %}
+{% endblock %}
