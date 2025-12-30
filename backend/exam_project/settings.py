@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 from django.urls import reverse_lazy
 import os
+from dotenv import load_dotenv
 
 # ==========================
 # Base Directory
@@ -9,34 +10,41 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==========================
+# Load environment variables
+# ==========================
+local_env = BASE_DIR / ".env.local"
+if local_env.exists():
+    load_dotenv(dotenv_path=local_env)
+else:
+    load_dotenv()
+
+# ==========================
 # Security
 # ==========================
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
-    "django-insecure-ol2x@g2v6!n_6jh$5qh-fb$75sdu214da^t=1bq&+7c!($v+cg"
+    "django-insecure-ol2x@g2v6!n_6jh$5qh-fb$75sdu214da^t=1bq&+7c!($v+cg",
 )
 
 DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
+# Separate session cookies for local vs docker if env is set
+SESSION_COOKIE_NAME = os.getenv("SESSION_COOKIE_NAME", "sessionid")
+
 # ==========================
 # Installed Apps
 # ==========================
 INSTALLED_APPS = [
-    # Django core
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Third‑party
     "widget_tweaks",
     "rest_framework",
     "corsheaders",
-
-    # Local apps
     "exam_project.accounts",
     "exam_project.games",
     "exam_project.common",
@@ -93,10 +101,6 @@ DATABASES = {
         "USER": os.getenv("DB_USER", "examuser"),
         "PASSWORD": os.getenv("DB_PASSWORD", "exampass"),
         "HOST": os.getenv("DB_HOST", "db"),
-        # "NAME": os.getenv("DB_NAME", "django_db"),
-        # "USER": os.getenv("DB_USER", "postgres"),
-        # "PASSWORD": os.getenv("DB_PASSWORD", "postgrespw"),
-        # "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
@@ -109,6 +113,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3001",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:8001",
+    "http://127.0.0.1:8001",
 ]
 
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS

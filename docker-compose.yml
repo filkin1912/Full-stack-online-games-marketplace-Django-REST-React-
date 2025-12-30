@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"   # host:container mapping to avoid conflict with other Postgres
+      - "5433:5432"   # host:container mapping to avoid conflict with local Postgres
 
   backend:
     image: filk1912/gamesplay-backend:latest
@@ -30,10 +30,12 @@ services:
       DB_PASSWORD: exampass
       DB_HOST: db
       DB_PORT: "5432"
-
+      SESSION_COOKIE_NAME: docker_sessionid   # prevents logout collision with local Django
+    volumes:
+      - ./backend/mediafiles:/app/mediafiles   # shared media folder for images
 
   frontend:
-    image: filk1912/gamesplay-frontend:latest
+    image: filk1912/gamesplay-frontend-1:latest
     container_name: gamesplay-frontend
     ports:
       - "3001:3000"

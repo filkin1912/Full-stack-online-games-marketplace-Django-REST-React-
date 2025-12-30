@@ -1,0 +1,76 @@
+/* ===========================
+   Comment Section Container
+   =========================== */
+.comment-section {
+    width: 80%;
+    margin: 30px auto;
+    text-align: center;
+}
+
+.comment-section h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* ===========================
+   Individual Comment Box
+   =========================== */
+.comment-box {
+    display: grid;
+    place-items: center;
+    width: 50%;
+    margin: 10px auto;
+    padding: 6px 12px;
+
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    text-align: center;
+    position: relative;
+}
+
+.comment-box p {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+    overflow-wrap: anywhere; /* Prevent overflow on long words */
+}
+
+/* ===========================
+   Close Button
+   =========================== */
+.comment-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    background-color: red;
+    color: white;
+    border: none;
+
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+
+    display: none;
+}
+
+.comment-box:hover .comment-close {
+    display: block;
+}
+
+/* ===========================
+   Comment Form
+   =========================== */
+.comment-section form {
+    width: 50%;
+    margin: 20px auto 0 auto;
+    text-align: center;
+}
+
+.comment-section textarea {
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+}

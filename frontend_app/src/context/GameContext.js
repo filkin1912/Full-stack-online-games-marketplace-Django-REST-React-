@@ -26,9 +26,7 @@ export const GameProvider = ({children}) => {
 
     const gameService = useMemo(() => gameServiceFactory(token), [token]);
 
-    // -----------------------------
-    // Load games (initial + refresh)
-    // -----------------------------
+    // Load games
     const refreshGames = async () => {
         try {
             setLoading(true);
@@ -41,12 +39,9 @@ export const GameProvider = ({children}) => {
 
             setGames(list);
 
-            // Reset filtered list if no search term
             if (!searchTerm) {
                 setFilteredGames([]);
             }
-
-            console.log("Refreshed games:", list.length);
         } catch (err) {
             setError(err?.message || "Failed to load games");
         } finally {
@@ -54,14 +49,11 @@ export const GameProvider = ({children}) => {
         }
     };
 
-    // Initial load
     useEffect(() => {
         refreshGames();
     }, [gameService]);
 
-    // -----------------------------
     // Create game
-    // -----------------------------
     const onCreateGameSubmit = async (formData) => {
         try {
             const createdGame = await gameService.create(formData);
@@ -74,10 +66,14 @@ export const GameProvider = ({children}) => {
     };
 
     // -----------------------------
-    // Search
+    // FIXED SEARCH — PAGE RESET FIRST
     // -----------------------------
     const handleSearch = (term) => {
         const normalized = term.trim();
+
+        // 🔥 Reset page BEFORE updating searchTerm
+        setPage(1);
+
         setSearchTerm(normalized);
 
         if (!normalized) {
@@ -97,9 +93,6 @@ export const GameProvider = ({children}) => {
         setPage(1);
     };
 
-    // -----------------------------
-    // Context value
-    // -----------------------------
     const contextValue = {
         games,
         filteredGames,
@@ -107,7 +100,7 @@ export const GameProvider = ({children}) => {
         loading,
         error,
         handleSearch,
-        refreshGames,   // <-- IMPORTANT: now available to Header.js
+        refreshGames,
         page,
         setPage,
         perPage,

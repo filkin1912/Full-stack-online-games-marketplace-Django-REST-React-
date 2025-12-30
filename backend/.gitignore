@@ -15,8 +15,6 @@ venv/
 # Django-specific
 db.sqlite3
 *.log
-media/
-staticfiles/
 local_settings.py
 
 # IDE/editor configs

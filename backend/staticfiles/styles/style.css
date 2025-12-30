@@ -1,0 +1,25 @@
+/* 1. Variables + Reset + HTML defaults */
+@import "base.css";
+
+/* 2. Typography (global text rules) */
+@import "typography.css";
+
+/* 3. Global components (navigation, forms, alerts) */
+@import "navigation.css";
+@import "forms.css";
+@import "alert-messages.css";
+@import "comments.css";
+
+/* 4. Layout (shared structural components) */
+@import "layout/containers.css";
+@import "layout/game-card.css";
+@import "layout/game-details.css";
+
+/* 5. Page-specific overrides */
+@import "pages/bought-games.css";
+@import "pages/game-editor.css";
+@import "profile-details.css";
+
+/* 6. Legacy (disabled) */
+/*@import "games.css";*/
+

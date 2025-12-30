@@ -1,0 +1,181 @@
+/* ===========================
+   Two-Column Layout Wrapper
+   =========================== */
+.details-page-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start; /* ✅ Align columns to top */
+    gap: 40px;
+    padding: 32px 20px;
+}
+
+/* ===========================
+   Game Details Section (Left Column)
+   =========================== */
+#game-details {
+    flex: 1 1 600px;
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(52, 58, 57, 0.7);
+    border: 1px solid #ccc;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    margin: 0; /* ✅ FIX: remove top margin */
+}
+
+
+/* ===========================
+   Image + Info Inner Layout
+   =========================== */
+.game-details-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.game-picture-block {
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.game-info-block {
+    flex: 1 1 300px;
+    max-width: 500px;
+    text-align: left;
+}
+
+.game-info-block h2 {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--color-light);
+}
+
+/* ===========================
+   Game Info Table
+   =========================== */
+.game-info-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 16px;
+    border: 1px solid grey;
+    background: rgba(40, 44, 43, 0.8);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.game-info-table th,
+.game-info-table td {
+    padding: 10px 14px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-light);
+    text-align: left;
+}
+
+.game-info-table thead {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.game-info-table tbody tr {
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ===========================
+   Action Buttons Row
+   =========================== */
+.buttons {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ===========================
+   Go Back Button
+   =========================== */
+.go-back-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 16px 7px 5px;
+    background: #fefefe !important;
+    border: 3px solid #fefefe !important;
+    border-radius: 0 5% 5% 0;
+    color: black;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    opacity: 1 !important;
+    z-index: 10;
+    overflow: visible;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.go-back-btn:hover {
+    transform: scale(1.05);
+}
+
+.go-back-text {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.go-back-icon {
+    position: absolute;
+    top: 50%;
+    right: -17px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fefefe !important;
+    border: 3px solid #fefefe !important;
+    opacity: 1 !important;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* ===========================
+   Comment Section (Right Column)
+   =========================== */
+.comment-section {
+    flex: 1 1 500px;
+    padding: 20px;
+    border-radius: 8px;
+    background: rgba(52, 58, 57, 0.6);
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+    color: var(--color-light);
+}
+
+.comment-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.comment-delete-form {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+
+.comment-close {
+    background: transparent;
+    border: none;
+    color: var(--color-accent);
+    font-size: 1.2rem;
+    cursor: pointer;
+}

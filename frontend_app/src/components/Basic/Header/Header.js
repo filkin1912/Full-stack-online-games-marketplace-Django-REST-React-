@@ -5,7 +5,12 @@ import {useState} from "react";
 
 export const Header = () => {
     const {isAuthenticated, onLogout, token} = useAuthContext();
-    const {handleSearch, refreshGames} = useGameContext();
+    const {
+        handleSearch,
+        refreshGames,
+        resetPagination, // ✅ added
+    } = useGameContext();
+
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -14,11 +19,13 @@ export const Header = () => {
     const onSearchSubmit = (e) => {
         e.preventDefault();
         handleSearch(searchValue.trim());
+        resetPagination(); // ✅ ensures search starts from page 1
     };
 
     const resetSearch = () => {
         setSearchValue("");
         handleSearch("");
+        resetPagination(); // ✅ ensures reset starts from page 1
     };
 
     const seedGames = async () => {
@@ -36,14 +43,9 @@ export const Header = () => {
             }
 
             alert("20 games created successfully!");
-
-            // Refresh the full game list from backend
             await refreshGames();
-
-            // Reset search filters
             handleSearch("");
-
-            // Redirect to home page
+            resetPagination(); // ✅ optional: reset after seeding
             navigate("/");
         } catch (err) {
             console.error(err);
@@ -89,9 +91,7 @@ export const Header = () => {
             <nav>
                 {isAuthenticated ? (
                     <>
-                        <button onClick={seedGames} className="nav-btn">
-                            SEED Games
-                        </button>
+                        <button onClick={seedGames} className="nav-btn">SEED Games</button>
                         <button onClick={onLogout} className="nav-btn">LogOut</button>
                         <Link to="/bought-games" className="nav-btn">Bought games</Link>
                         <Link to="/my-games" className="nav-btn">My games</Link>

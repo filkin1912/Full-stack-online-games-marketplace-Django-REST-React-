@@ -1,0 +1,91 @@
+/* ===========================
+   Overlay (centers messages)
+   =========================== */
+.message-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* ===========================
+   Message Container
+   =========================== */
+.message-container {
+    text-align: center;
+    width: 100%;
+}
+
+/* ===========================
+   Base Message Style
+   =========================== */
+.custom-message {
+    position: relative;
+    display: inline-block;
+    padding: 14px 55px 14px 20px;
+    margin: 14px auto;
+    border: 3px solid #444;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-weight: bold;
+    font-size: 1.35rem;
+    color: #222;
+    pointer-events: auto;
+    animation: fadeOut 3.5s ease-in-out forwards; /* ✅ stays visible for 3 seconds */
+}
+
+/* ===========================
+   Message Variants
+   =========================== */
+.custom-message.success {
+    border-color: green;
+    background-color: #e6ffe6;
+    color: darkgreen;
+}
+
+.custom-message.error {
+    border-color: red;
+    background-color: #ffe6e6;
+    color: darkred;
+}
+
+.custom-message.warning {
+    border-color: orange;
+    background-color: #fff3e6;
+    color: darkorange;
+}
+
+/* ===========================
+   Close Button
+   =========================== */
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 22px;
+    padding: 0;
+}
+
+/* ===========================
+   Fade-out Animation
+   =========================== */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    75% { opacity: 1; } /* ✅ stays visible longer */
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+        visibility: hidden;
+    }
+}

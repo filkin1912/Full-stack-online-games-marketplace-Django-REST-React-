@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from "react";
+import {useMemo} from "react";
 import {useGameContext} from "../../context/GameContext";
 import {GameCard} from "../Catalog/Game/Game";
 
@@ -10,15 +10,7 @@ export const Home = () => {
         sort,
         page,
         perPage,
-        setPage,
-        setPerPage
     } = useGameContext();
-
-    // Reset pagination when entering Home
-    useEffect(() => {
-        setPerPage(12);
-        setPage(1);
-    }, [setPerPage, setPage]);
 
     const hasSearch = searchTerm.trim().length > 0;
     const baseList = hasSearch ? filteredGames : games;

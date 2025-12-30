@@ -15,14 +15,15 @@ export const CatalogLayout = ({children}) => {
         setPage,
         sort,
         setSort,
+        searchTerm,   // ✅ added
     } = useGameContext();
 
     const location = useLocation();
 
     useEffect(() => {
-        setPage(1); // Reset page when route changes
-    }, [location.pathname, setPage]);
-
+        // 🔥 Reset page when route OR search changes
+        setPage(1);
+    }, [location.pathname, searchTerm, setPage]);
 
     const totalItems = filteredGames.length || games.length;
     const totalPages = Math.ceil(totalItems / perPage);
