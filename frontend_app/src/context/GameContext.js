@@ -5,6 +5,7 @@ import {
     useMemo,
     useState,
 } from "react";
+import {useNavigate} from "react-router-dom";
 import {gameServiceFactory} from "../services/gameService";
 import {AuthContext} from "./AuthContext";
 
@@ -12,6 +13,7 @@ export const GameContext = createContext();
 
 export const GameProvider = ({children}) => {
     const {token, incrementGamesCount} = useContext(AuthContext) || {};
+    const navigate = useNavigate();
 
     const [games, setGames] = useState([]);
     const [filteredGames, setFilteredGames] = useState([]);
@@ -26,16 +28,14 @@ export const GameProvider = ({children}) => {
 
     const gameService = useMemo(() => gameServiceFactory(token), [token]);
 
-    // Load games
+    // ✅ Load games from backend
     const refreshGames = async () => {
         try {
             setLoading(true);
             setError(null);
 
             const result = await gameService.getAll();
-            const list = Array.isArray(result)
-                ? result
-                : result?.results || [];
+            const list = Array.isArray(result) ? result : result?.results || [];
 
             setGames(list);
 
@@ -53,7 +53,7 @@ export const GameProvider = ({children}) => {
         refreshGames();
     }, [gameService]);
 
-    // Create game
+    // ✅ Create a new game
     const onCreateGameSubmit = async (formData) => {
         try {
             const createdGame = await gameService.create(formData);
@@ -65,15 +65,45 @@ export const GameProvider = ({children}) => {
         }
     };
 
-    // -----------------------------
-    // FIXED SEARCH — PAGE RESET FIRST
-    // -----------------------------
+    // ✅ Edit an existing game
+    const onGameEditSubmit = async (gameId, formData) => {
+        try {
+            const updatedGame = await gameService.edit(gameId, formData);
+
+            // Update the game in local state
+            setGames((prev) =>
+                prev.map((g) =>
+                    Number(g.id) === Number(gameId)
+                        ? {...g, ...updatedGame}
+                        : g
+                )
+            );
+
+            // Refresh full list from backend to avoid stale data
+            await refreshGames();
+
+            return updatedGame;
+        } catch (err) {
+            throw err;
+        }
+    };
+
+
+    // ✅ Delete a game by ID
+    const onGameDeleteSubmit = async (gameId) => {
+        try {
+            await gameService.remove(gameId);
+            await refreshGames();
+            navigate("/");
+        } catch (err) {
+            console.error("Failed to delete game:", err);
+        }
+    };
+
+    // ✅ Search games by title
     const handleSearch = (term) => {
         const normalized = term.trim();
-
-        // 🔥 Reset page BEFORE updating searchTerm
         setPage(1);
-
         setSearchTerm(normalized);
 
         if (!normalized) {
@@ -93,6 +123,7 @@ export const GameProvider = ({children}) => {
         setPage(1);
     };
 
+    // ✅ Context value exposed to consumers
     const contextValue = {
         games,
         filteredGames,
@@ -108,6 +139,8 @@ export const GameProvider = ({children}) => {
         sort,
         setSort,
         onCreateGameSubmit,
+        onGameEditSubmit, // ✅ Now available to EditGame.js
+        onGameDeleteSubmit,
         resetPagination,
     };
 

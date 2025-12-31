@@ -529,35 +529,41 @@ footer p {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
     z-index: 9999;
 }
 
+/* ===========================
+   Popup Box
+   =========================== */
 .popup-box {
     background: white;
     padding: 24px 32px;
-    border-radius: 8px;
+    border-radius: 10px;
     text-align: center;
-    box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
 }
 
 .popup-box p {
+    margin-bottom: 20px;
     font-size: 1.2rem;
-    margin-bottom: 16px;
     font-weight: bold;
+    color: #333333;
 }
 
+/* ===========================
+   Popup Buttons
+   =========================== */
 .popup-box .btn {
     padding: 0.6em 1.2em;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 6px;
-    cursor: pointer;
     border: none;
-    transition: background 0.3s ease;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .popup-box .btn--submit {
@@ -567,14 +573,30 @@ footer p {
 
 .popup-box .btn--submit:hover {
     background: #5718e9;
+    transform: translateY(-2px);
 }
 
 .popup-box .btn--cancel {
-    background: #ccc;
-    color: #333;
+    background: #cccccc;
+    color: #333333;
     margin-left: 12px;
 }
 
 .popup-box .btn--cancel:hover {
-    background: #999;
+    background: #999999;
+    transform: translateY(-2px);
+}
+
+/* ===========================
+   Fade-in Animation
+   =========================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

@@ -48,10 +48,10 @@
 .btn--details {
     background: var(--color-accent);
     color: var(--color-light);
-    padding: 5px 12px;
+    padding: 6px 12px;
     border-radius: 2px;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
@@ -262,6 +262,20 @@
 }
 
 /* ===========================
+   Edit game/picture delete button
+   =========================== */
+.btn.delete-image {
+  margin-top: 0.5em;
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  padding: 0.4em 1em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+/* ===========================
    Empty State
    =========================== */
 .no-articles {
@@ -276,6 +290,7 @@
 }
 
 .no-articles--welcome {
+    color: whitesmoke;
     margin-top: -44px;
     margin-bottom: -2px;
     font-size: 3rem;

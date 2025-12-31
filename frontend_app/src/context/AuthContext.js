@@ -49,7 +49,7 @@ export const AuthProvider = ({children}) => {
             const userDetails = await fetchUserDetails(result.access, data.email);
             setAuth({...authData, ...userDetails});
 
-            navigate("/catalog");
+            navigate("/");
             return {};
         } catch (err) {
             return {general: err?.detail || err?.message || "Login failed"};
@@ -82,7 +82,7 @@ export const AuthProvider = ({children}) => {
             const userDetails = await fetchUserDetails(loginResult.access, email);
             setAuth({...authData, ...userDetails});
 
-            navigate("/catalog");
+            navigate("/");
             return {};
         } catch (err) {
             return {general: err?.message || "Registration failed"};

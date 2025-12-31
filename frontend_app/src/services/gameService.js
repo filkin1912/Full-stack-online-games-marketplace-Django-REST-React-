@@ -1,5 +1,5 @@
-import { requestFactory } from "./requester";
-import { boughtGamesServiceFactory } from "./boughtGameService";
+import {requestFactory} from "./requester";
+import {boughtGamesServiceFactory} from "./boughtGameService";
 
 const baseUrl = `${process.env.REACT_APP_API_URL}/api/games/`;
 
@@ -8,7 +8,7 @@ export const gameServiceFactory = (token) => {
     const boughtGamesService = boughtGamesServiceFactory(token);
 
     // ✅ Fetch ALL games by walking through paginated pages
-    const getAll = async ({ signal } = {}) => {
+    const getAll = async ({signal} = {}) => {
         let page = 1;
         let allGames = [];
         let hasNext = true;
@@ -63,7 +63,8 @@ export const gameServiceFactory = (token) => {
         getOne,
         create,
         edit,
-        delete: deleteGame,
+        remove: deleteGame,
         buyGame,
     };
+
 };

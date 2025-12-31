@@ -43,13 +43,15 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 
 ## 🐍 START Backend – Local Setup (Django on :8000)
 
-| Step | Description |
-|------|-------------|
+
+| Step                                      | Description                                                                                                                               |
+|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| **Go to the frontend folder**             | `...\Full-stack-online-games-marketplace-Django-REST-React-\backend`                                                                      |
 | **1️⃣ Create & activate virtual environment** | `python -m venv venv`<br>`source venv/bin/activate` (Linux/macOS)<br>`venv\Scripts\Activate.ps1` or `venv\Scripts\activate.bat` (Windows) |
-| **2️⃣ Install dependencies** | `pip install -r requirements.txt` |
-| **3️⃣ Apply database migrations** | `python manage.py migrate` |
-| **4️⃣ Create admin user** | `python manage.py createsuperuser` |
-| **5️⃣ Run backend server** | `python manage.py runserver 8000` |
+| **2️⃣ Install dependencies**              | `pip install -r requirements.txt`                                                                                                         |
+| **3️⃣ Apply database migrations**         | `python manage.py migrate`                                                                                                                |
+| **4️⃣ Create admin user**                 | `python manage.py createsuperuser`                                                                                                        |
+| **5️⃣ Run backend server**                | `python manage.py runserver 8000`                                                                                                         |
 
 - **Local backend:** `http://localhost:8000`  
 - **Local admin:** `http://localhost:8000/admin`
@@ -63,11 +65,12 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 
 ## ⚛️ START Frontend – Local Setup (React on :3000)
 
-| Step | Description |
-|------|-------------|
-| **1️⃣ Go to the frontend folder** | `...\Full-stack-online-games-marketplace-Django-REST-React-\frontend_app` |
-| **2️⃣ Install frontend dependencies** | `npm install` |
-| **3️⃣ Start the local frontend** | `npm start` |
+| Step                                                                             | Description                                                                                                     |
+|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| **1️⃣ Go to the frontend folder**                                                | `...\Full-stack-online-games-marketplace-Django-REST-React-\frontend_app`                                       |
+| **2️⃣ Install frontend dependencies**                                            | `npm install`                                                                                                   |
+| **<span style="color: orange; font-weight: bold;">Ignore these warnings</span>** | **<span style="color: red; font-weight: bold;">Don't execute:</span>**`npm audit fix` , `npm audit fix --force` |
+| **3️⃣ Start the local frontend**                                                 | `npm start`                                                                                                     |
 
 This will launch the React dev server at:
 - **Local frontend:** `http://localhost:3000` (development, hot reload)

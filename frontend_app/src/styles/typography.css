@@ -3,6 +3,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     margin-bottom: 0.4em;
     font-size: 80%; /* scale heading sizes globally */
+    color: whitesmoke;
 }
 
 p {

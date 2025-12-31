@@ -5,6 +5,9 @@ import {useService} from "../../hooks/useService";
 import {userServiceFactory} from "../../services/userService";
 import {Link} from "react-router-dom";
 
+// Import fallback image from src/images/
+import noImage from "../../images/no-image.jpg";
+
 export const UserDetails = () => {
     const {
         userEmail,
@@ -44,7 +47,6 @@ export const UserDetails = () => {
         });
     }, [token]);
 
-
     const fullName =
         [
             values.first_name || first_name,
@@ -54,13 +56,16 @@ export const UserDetails = () => {
             .join(" ")
             .trim() || "No name";
 
-    const mergedProfilePicture = values.profile_picture || profile_picture || "";
+    // Merge profile picture sources
+    const mergedProfilePicture =
+        values.profile_picture || profile_picture || "";
 
+    // Final image selection with fallback
     const profileImage =
         typeof mergedProfilePicture === "string" &&
         mergedProfilePicture.trim() !== ""
             ? mergedProfilePicture
-            : "/images/no-image.jpg";
+            : noImage;
 
     const handleDelete = async () => {
         const targetId = values.id || userId;
