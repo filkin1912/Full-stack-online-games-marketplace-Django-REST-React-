@@ -133,9 +133,9 @@ class SeedGamesApiView(IsAuthenticatedMixin, generics.CreateAPIView):
         # Create 20 auto-generated games
         GameModel.objects.bulk_create([
             GameModel(
-                title=f"Game {i} - {now}",
+                title=f"Game {i} - {now}"[:24],
                 category=random.choice(categories),
-                price=Decimal(random.randrange(100, 150)),
+                price=Decimal(random.randrange(100, 280)),
                 summary="Auto-generated",
                 user=request.user,
             )

@@ -29,13 +29,13 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 
 ## 🚀 Option 1: Run the entire stack with Docker
 
-| Step | Description |
-|------|-------------|
-| **1️⃣ Clone the repository** | `git clone git@github.com:filkin1912/Full-stack-online-games-marketplace-Django-REST-React-.git`<br>`cd Full-stack-online-games-marketplace-Django-REST-React-` |
-| **2️⃣ Start Docker environment** | `docker compose up -d` |
-| **3️⃣ Create Django superuser (Docker)** | `docker exec -it gamesplay-backend python manage.py createsuperuser` |
-| **4️⃣ Access the application** | Frontend: `http://localhost:3001`<br>Backend: `http://localhost:8001`<br>Admin: `http://localhost:8001/admin` |
-| **5️⃣ API endpoints** | Games: `/api/games/`<br>Accounts: `/api/accounts/`<br>Common: `/api/common/`<br>JWT: `/api/auth/token/`, `/refresh/`, `/verify/` |
+| Step | Description                                                                                                                                                        |
+|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1️⃣ Clone the repository** | `git clone git@github.com:filkin1912/Full-stack-online-games-marketplace-Django-REST-React-.git`<br>`cd .\Full-stack-online-games-marketplace-Django-REST-React-\` |
+| **2️⃣ Start Docker environment** | `docker compose up -d`                                                                                                                                             |
+| **3️⃣ Create Django superuser (Docker)** | `cd .\backend\ `<br>`docker exec -it gamesplay-backend-1 python manage.py createsuperuser`                                                                         |
+| **4️⃣ Access the application** | Frontend: `http://localhost:3001`<br>Backend: `http://localhost:8001`<br>Admin: `http://localhost:8001/admin`                                                      |
+| **5️⃣ API endpoints** | Games: `/api/games/`<br>Accounts: `/api/accounts/`<br>Common: `/api/common/`<br>JWT: `/api/auth/token/`, `/refresh/`, `/verify/`                                   |
 
 ---
 

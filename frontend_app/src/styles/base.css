@@ -1,19 +1,67 @@
-/* ===========================
-   CSS Variables (Theme Colors)
-   =========================== */
+/* ==========================================
+   GLOBAL DESIGN SYSTEM
+   ========================================== */
+
 :root {
+    /* Theme colors */
     --color-primary: #778e9c;
     --color-primary-hover: #8fa9b9;
     --color-secondary: #54557b;
-    --color-accent: #fd5454;
-    --color-bg: #ecf0f3;
+    --color-accent: #b70509;
+    --color-bg: #d0caca;
     --color-dark: #2a4980;
-    --color-light: #ffffff;
+    --color-light: #cecece;
+
+    /* Shadows */
+    --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 0 16px rgba(0, 0, 0, 0.3);
+    --shadow-strong: 0 0 32px rgba(0, 0, 0, 0.4);
+
+    /* Border radii */
+    --radius-xs: 2px;
+    --radius-sm: 3px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-pill: 50%;
+
+    /* Borders */
+    --border-light: 1px solid #ccc;
+    --border-white: 1px solid #ffffff;
+    --border-soft: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 6px;
+    --space-md: 8px;
+    --space-lg: 12px;
+    --space-xl: 16px;
+    --space-2xl: 20px;
+    --space-3xl: 24px;
+    --space-4xl: 32px;
+
+    /* Typography */
+    --font-xs: 0.8rem;
+    --font-sm: 0.9rem;
+    --font-md: 1rem;
+    --font-lg: 1.3rem;
+    --font-title: 1.6rem;
+    --font-display: 3rem;
+
+    /* Glass backgrounds */
+    --bg-glass-light: rgba(255, 255, 255, 0.05);
+    --bg-glass-medium: rgba(62, 68, 67, 0.6);
+    --bg-glass-dark: rgba(52, 58, 57, 0.7);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+
+    /* Heights */
+    --header-height: 50px;
+    --footer-height: 50px;
 }
 
-/* ===========================
-   Global Reset
-   =========================== */
+/* Reset */
 *,
 *::before,
 *::after {
@@ -22,11 +70,215 @@
     box-sizing: border-box;
 }
 
-/* ===========================
-   HTML Defaults
-   =========================== */
+/* HTML defaults */
 html {
     font-family: Arial, sans-serif;
     font-size: 12.8px;
     line-height: 1.12;
+    scroll-behavior: smooth;
+}
+
+/* Body background */
+body {
+    background: url('../images/background_image.jpg') fixed center/cover no-repeat;
+    margin: 0;
+}
+
+/* Header & footer base */
+header,
+footer {
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    width: 100%;
+    padding: 0.4em 0.8em;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--header-height);
+    background-color: rgba(42, 73, 128, 0.7);
+}
+
+/* Header left */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+header h1 a.home {
+    font-size: var(--font-title);
+    font-family: Georgia, serif;
+    color: var(--color-light);
+    text-decoration: none;
+    border: 2px solid var(--color-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs) var(--space-xl);
+    background-color: rgba(42, 73, 128, 0.3);
+    box-shadow: var(--shadow-soft);
+    transition: background var(--transition-medium), transform var(--transition-fast);
+}
+
+header h1 a.home:hover {
+    background-color: rgba(42, 73, 128, 0.6);
+    transform: translateY(-2px);
+}
+
+/* Search bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-md);
+    border: 2px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    background: var(--color-light);
+}
+
+.search-btn {
+    padding: var(--space-sm) var(--space-xl);
+    font-size: var(--font-md);
+    border: 2px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    background: var(--color-primary);
+    color: var(--color-light);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.search-btn:hover {
+    background: var(--color-primary-hover);
+}
+
+/* Navigation buttons */
+.nav-btn,
+header nav a {
+    display: inline-block;
+    padding: 0.7em 1.12em;
+    background: var(--color-primary);
+    color: var(--color-light);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    font-size: 14px;
+    transition:
+        background var(--transition-medium),
+        transform var(--transition-fast),
+        opacity var(--transition-medium);
+    opacity: 0.9;
+}
+
+.nav-btn:hover,
+header nav a:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+    opacity: 1;
+}
+
+nav {
+    display: flex;
+    gap: var(--space-lg);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--footer-height);
+    background-color: rgba(42, 73, 128, 0.7);
+    color: #ffffff;
+    font-size: 1.15em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.15em;
+}
+
+/* Profile balance box */
+.profile-balance-box {
+    border: 1px solid black;
+    border-radius: var(--radius-md);
+    background-color: var(--color-accent);
+    box-shadow: var(--shadow-strong);
+    opacity: 0.9;
+    padding: var(--space-sm) var(--space-xl);
+    display: inline-block;
+    color: white;
+    font-weight: bold;
+}
+
+/* Controls row */
+.controls-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin: 15px 0;
+    padding: 0 20px;
+    gap: 20px;
+}
+
+.sort-form {
+    justify-self: start;
+}
+
+.per-page-form {
+    justify-self: end;
+}
+
+.controls-heading {
+    justify-self: center;
+    font-size: 2rem;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    margin: 0;
+}
+
+/* Utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-light {
+    color: var(--color-light);
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.shadow-soft {
+    box-shadow: var(--shadow-soft);
+}
+
+.shadow-medium {
+    box-shadow: var(--shadow-medium);
+}
+
+.shadow-strong {
+    box-shadow: var(--shadow-strong);
 }

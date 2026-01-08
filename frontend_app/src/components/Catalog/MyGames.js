@@ -1,23 +1,29 @@
-import {useContext, useMemo} from "react";
-import {AuthContext} from "../../context/AuthContext";
-import {useGameContext} from "../../context/GameContext";
-import {GameCard} from "./Game/Game";
+import { useContext, useMemo } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useGameContext } from "../../context/GameContext";
+import { GameCard } from "./Game/Game";
+import { CatalogLayout } from "../Shared/CatalogLayout";
 
 export const MyGames = () => {
-    const {userId, isAuthenticated} = useContext(AuthContext);
-    const {games, filteredGames, searchTerm, sort, page, perPage} = useGameContext();
+    const { userId, isAuthenticated } = useContext(AuthContext);
+    const {
+        games,
+        filteredGames,
+        searchTerm,
+        sort,
+        page,
+        perPage,
+    } = useGameContext();
 
     const hasSearch = searchTerm.trim().length > 0;
     const baseList = hasSearch ? filteredGames : games;
 
-    // Filter owned games
     const ownedGames = useMemo(() => {
         return baseList.filter((game) => String(game.user) === String(userId));
     }, [baseList, userId]);
 
-    // Sorting
     const sortedOwned = useMemo(() => {
-        let sorted = [...ownedGames];
+        const sorted = [...ownedGames];
         if (sort === "oldest") {
             sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         } else if (sort === "price") {
@@ -28,35 +34,38 @@ export const MyGames = () => {
         return sorted;
     }, [ownedGames, sort]);
 
-    // Pagination slicing
     const paginatedOwned = useMemo(() => {
         const start = (page - 1) * perPage;
         return sortedOwned.slice(start, start + perPage);
     }, [sortedOwned, page, perPage]);
 
-    if (!games.length && !hasSearch) {
-        return <p className="no-articles">No games yet</p>;
-    }
-
-    if (hasSearch && paginatedOwned.length === 0) {
-        return <p className="no-articles">No such game</p>;
-    }
-
-    if (!ownedGames.length) {
-        return <p className="no-articles">You don’t own any games</p>;
-    }
+    const noGames = !games.length && !hasSearch;
+    const noMatch = hasSearch && paginatedOwned.length === 0;
+    const noOwned = !ownedGames.length;
 
     return (
-        <section id="home-page">
-            <h1 className="no-articles--welcome">{isAuthenticated ? "My Games" : "Please login to view your games"}</h1>
+        <CatalogLayout totalItems={sortedOwned.length}>
+            <div className="general-app-container">
+                <p className="no-articles no-articles--welcome">
+                    {isAuthenticated ? "MY GAMES" : "Please login to view your games"}
+                </p>
 
-            <div className="game-grid-wrapper">
-                <section id="welcome-world" className="game-grid">
-                    {paginatedOwned.map((game) => (
-                        <GameCard key={game.id || game._id} game={game}/>
-                    ))}
-                </section>
+                {noGames && <p className="no-articles">NO UPLOADED GAMES YET</p>}
+                {noMatch && <p className="no-articles">NO GAME</p>}
+                {noOwned && !noMatch && !noGames && (
+                    <p className="no-articles">NO OWNED GAMES</p>
+                )}
+
+                {!noOwned && !noMatch && !noGames && (
+                    <div className="game-grid-wrapper">
+                        <section id="welcome-world" className="game-grid">
+                            {paginatedOwned.map((game) => (
+                                <GameCard key={game.id || game._id} game={game} />
+                            ))}
+                        </section>
+                    </div>
+                )}
             </div>
-        </section>
+        </CatalogLayout>
     );
 };

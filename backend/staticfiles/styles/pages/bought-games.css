@@ -1,20 +1,18 @@
 /* ===========================
-   Bought Header Row (Updated)
+   Bought Header Row
    =========================== */
 .bought-header-row {
     display: flex;
-    justify-content: center; /* Center BOUGHT GAMES */
+    justify-content: center;
     align-items: center;
-    position: relative; /* Allows absolute positioning */
-    margin-bottom: -6px; /* Requested spacing */
+    position: relative;
+    margin-bottom: -6px;
     padding: 0 20px;
 }
 
-/* ===========================
-   Bought Header Wrapper (Spacing Control)
-   =========================== */
+/* Spacing Control */
 .bought-header-wrapper {
-    margin-top: -16px; /* Reduces space above BOUGHT GAMES */
+    margin-top: -16px;
 }
 
 /* Total spent on the left */
@@ -48,4 +46,10 @@
     margin-bottom: 10px;
     padding: 4px 12px;
     text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+    border: 1px solid #9b0407;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-accent);
+    transform: translateY(40%);
+    position: relative; /* ✅ make it positioned */
+    z-index: 9999; /* ✅ ensures top layer visibility */
 }

@@ -23,7 +23,6 @@ import {CreateGame} from "./components/CreateGame/CreateGame";
 import {MyGames} from "./components/Catalog/MyGames";
 import {DetailsGame} from "./components/DetailsGame/DetailsGame";
 import {BoughtGames} from "./components/BoughtGames/BoughtGames";
-import {CatalogLayout} from "./components/Shared/CatalogLayout";
 
 function App() {
     return (
@@ -34,16 +33,8 @@ function App() {
                         <Header/>
 
                         <Routes>
-                            <Route path="/" element={
-                                <CatalogLayout>
-                                    <Home/>
-                                </CatalogLayout>
-                            }/>
-                            <Route path="/my-games" element={
-                                <CatalogLayout>
-                                    <MyGames/>
-                                </CatalogLayout>
-                            }/>
+                            <Route path="/" element={<Home/>}/>
+                            <Route path="/my-games" element={<MyGames/>}/>
                             <Route path="/register" element={<Register/>}/>
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/logout" element={<Logout/>}/>
@@ -79,13 +70,10 @@ function App() {
                                 path="/bought-games"
                                 element={
                                     <RouteGuard>
-                                        <CatalogLayout>
-                                            <BoughtGames/>
-                                        </CatalogLayout>
+                                        <BoughtGames/>
                                     </RouteGuard>
                                 }
                             />
-
 
                             <Route
                                 path="/user-details/edit/:userId"

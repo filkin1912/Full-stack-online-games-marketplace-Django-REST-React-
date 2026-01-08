@@ -1,13 +1,12 @@
 {% extends 'base/base.html' %}
 {% load static %}
-{% block content %}
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 
-    <p class="no-articles">Profile Details</p>
+{% block content %}
+
+    <p class="no-articles">PROFILE</p>
 
     <section id="general-app-container">
-
-        <div class="profile-details-wrapper">
+        <div class="profile-details-wrapper vertical-stack">
 
             <!-- Profile Picture -->
             <div class="profile-picture-block">
@@ -18,40 +17,59 @@
                 {% endif %}
             </div>
 
-            <!-- Profile Info -->
+            <!-- Profile Info Table -->
             <div class="profile-info-block">
-
-                {% if object.first_name and object.last_name %}
-                    <h2>{{ object.full_name }}</h2>
-                {% else %}
-                    <h2>No name</h2>
-                {% endif %}
-
-                <p>Email: {{ object.email }}</p>
-
-                {% if object.age %}
-                    <p>Age: {{ object.age }}</p>
-                {% endif %}
-
-                <p>User ID: {{ object.pk }}</p>
-                <p>Money: {{ object.money }}</p>
-                <p>Owned games: {{ games_count }}</p>
+                <table class="profile-info-table">
+                    <tbody>
+                        <tr>
+                            <th>Name:</th>
+                            <td>
+                                {% if object.first_name and object.last_name %}
+                                    {{ object.full_name }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ object.email }}</td>
+                        </tr>
+                        {% if object.age %}
+                        <tr>
+                            <th>Age:</th>
+                            <td>{{ object.age }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <th>User ID:</th>
+                            <td>{{ object.pk }}</td>
+                        </tr>
+                        <tr>
+                            <th>Money:</th>
+                            <td>${{ object.money|floatformat:2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Owned games:</th>
+                            <td>{{ games_count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <!-- Profile Actions -->
                 <div class="profile-actions">
                     <a href="{% url 'profile edit' pk=object.pk %}" class="btn btn--details">Edit</a>
                     <button class="btn btn--details" onclick="showProfileDeletePopup()">Delete</button>
                 </div>
-
             </div>
+
         </div>
     </section>
 
-    <!-- ✅ Delete Confirmation Popup -->
+    <!-- Delete Confirmation Popup -->
     <div id="profile-delete-popup" class="popup-overlay" style="display: none;">
         <div class="popup-box">
             <p>Do you want to delete your profile?</p>
-
             <form method="post" action="{% url 'profile delete' pk=object.pk %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn--submit">Yes</button>
@@ -60,7 +78,7 @@
         </div>
     </div>
 
-    <!-- ✅ Popup Logic -->
+    <!-- Popup Logic -->
     <script>
         function showProfileDeletePopup() {
             document.getElementById("profile-delete-popup").style.display = "flex";
@@ -70,5 +88,4 @@
             document.getElementById("profile-delete-popup").style.display = "none";
         }
     </script>
-
 {% endblock %}

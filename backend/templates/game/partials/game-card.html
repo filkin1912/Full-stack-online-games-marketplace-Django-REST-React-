@@ -1,11 +1,13 @@
 {% load static %}
 <div class="game">
     <div class="image-wrap">
+
         {% if game.game_picture %}
             <img src="{{ game.game_picture.url }}" alt="{{ game.title }}">
         {% else %}
-            <img src="{% static 'images/no-image.jpg' %}" alt="{{ game.title }}">
+            <img src="/media/game_pics/no-image.jpg" alt="{{ game.title }}">
         {% endif %}
+
     </div>
     <h3>{{ game.title }}</h3>
     <h1>{{ game.category }}</h1>

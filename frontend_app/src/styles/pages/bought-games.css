@@ -1,0 +1,49 @@
+/* Bought header row */
+.bought-header-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: -6px;
+    padding: 0 20px;
+}
+
+/* Spacing control */
+.bought-header-wrapper {
+    margin-top: -16px;
+}
+
+/* Total spent on the left */
+.bought-header-row .total-spent-box {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--color-light);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Center heading */
+.bought-header-row .no-articles--welcome {
+    margin: 0;
+    text-align: center;
+}
+
+/* Total spent fallback */
+.total-spent-box {
+    display: inline-block;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--color-light);
+    margin-top: -10px;
+    margin-bottom: 10px;
+    padding: 4px 12px;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+    border: 1px solid #9b0407;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-accent);
+    transform: translateY(40%);
+}

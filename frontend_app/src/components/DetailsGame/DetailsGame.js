@@ -6,9 +6,10 @@ import * as commentService from "../../services/commentService";
 import {AuthContext} from "../../context/AuthContext";
 import {useGameContext} from "../../context/GameContext";
 import goBackIcon from "../../images/go-back.jpg";
+import defaultAvatar from "../../images/default-user.jpg";
 
 export const DetailsGame = () => {
-    const {userId} = useContext(AuthContext);
+    const {userId, userEmail, profile_picture} = useContext(AuthContext);   // ✅ FIXED
     const {onGameDeleteSubmit} = useGameContext();
     const {gameId} = useParams();
 
@@ -18,8 +19,8 @@ export const DetailsGame = () => {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
     const [showDeletePopup, setShowDeletePopup] = useState(false);
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const isLoggedIn = Boolean(userId);
 
     useEffect(() => {
@@ -39,27 +40,35 @@ export const DetailsGame = () => {
         loadData();
     }, [gameId]);
 
-    // If backend returned 404 → game is null
     if (game === null) {
         return <h2>Game not found</h2>;
     }
 
-    // If still loading → game is undefined
     if (!game) {
         return <p>Loading...</p>;
     }
 
-
-    // Backend returns: user: 1
-    const isOwner = game.user === userId;
+    const isOwner = String(game.user) === String(userId);
     const isBought = game.isBought === true;
+
+    // ✅ EMAIL-BASED: detect if user already commented
+    const existingComment = isLoggedIn
+        ? comments.find((c) => c.user_email === userEmail)
+        : null;
 
     const onCommentSubmit = async (e) => {
         e.preventDefault();
 
+        if (!isLoggedIn || existingComment) return;
+
+        const formData = new FormData();
+        formData.append("text", commentText);
+
         try {
-            const created = await commentService.create(gameId, {text: commentText});
-            setComments((state) => [...state, created]);
+            const created = await commentService.create(gameId, formData);
+            // const created = await commentService.create(gameId, { text: commentText });
+            console.log("SET COMMENTS", created)
+            setComments((prev) => [...prev, created]);
             setCommentText("");
         } catch (err) {
             console.error("Failed to submit comment:", err);
@@ -69,22 +78,22 @@ export const DetailsGame = () => {
     const onCommentDelete = async (commentId) => {
         try {
             await commentService.remove(commentId);
-            setComments((state) => state.filter((c) => c.id !== commentId));
+            setComments((prev) => prev.filter((c) => c.id !== commentId));
         } catch (err) {
             console.error("Failed to delete comment:", err);
         }
     };
+    console.log("FIRST COMMENT:", comments[1]);
 
     return (
         <>
-            <div
-                className="details-page-wrapper"
-                style={{display: "flex", gap: "40px", alignItems: "flex-start"}}
-            >
-                {/* LEFT COLUMN */}
-                <section id="game-details" style={{flex: 1}}>
-                    <h1>Game Details</h1>
+            <div className="details-page-wrapper">
+                <p className="no-articles no-articles--welcome details-page-title">
+                    GAME DETAILS
+                </p>
 
+                {/* LEFT COLUMN */}
+                <section id="game-details">
                     <div className="game-details-wrapper">
                         <div className="game-picture-block">
                             {game.game_picture ? (
@@ -95,9 +104,9 @@ export const DetailsGame = () => {
                                 />
                             ) : (
                                 <img
-                                    src="/images/no-image.jpg"
-                                    alt="No game"
                                     className="entity-game-picture"
+                                    src="/images/no-image.jpg"
+                                    alt="game"
                                 />
                             )}
                         </div>
@@ -125,6 +134,7 @@ export const DetailsGame = () => {
                                     <td>Owner</td>
                                     <td>{game.ownerEmail || "Unknown"}</td>
                                 </tr>
+
                                 {game.summary && (
                                     <tr>
                                         <td>Description</td>
@@ -151,7 +161,7 @@ export const DetailsGame = () => {
                                             Delete
                                         </button>
                                     </>
-                                ) : !isBought ? (
+                                ) : (
                                     <Link to="/" className="go-back-btn">
                                         <span className="go-back-text">Go back&nbsp;</span>
                                         <img
@@ -160,27 +170,32 @@ export const DetailsGame = () => {
                                             className="go-back-icon"
                                         />
                                     </Link>
-                                ) : (
-                                    <h2>You already bought this game</h2>
                                 )}
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* RIGHT COLUMN */}
-                <div className="comment-section" style={{flex: 1}}>
-                    <h2>Comments</h2>
-
-                    {comments.length === 0 && <p>No comments yet.</p>}
-
-                    {Array.isArray(comments) &&
-                        comments.map((c) => (
-                            <div key={c.id} className="comment-box">
-                                <p>
-                                    <strong>{c.user_email}</strong>: {c.text}
-                                </p>
-                                {c.user_id === userId && (
+                {/* RIGHT COLUMN — COMMENTS */}
+                <div className="comment-section">
+                    {comments.map((c) => (
+                        <div key={c.id} className="comment-box">
+                            <div className="comment-inner">
+                                <img
+                                    src={c.profile_picture || defaultAvatar}
+                                    alt="User avatar"
+                                    className="comment-avatar"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = defaultAvatar;
+                                    }}
+                                />
+                                <div className="comment-content">
+                                    <p>
+                                        <span className="comment-email">{c.user_email}</span>: {c.text}
+                                    </p>
+                                </div>
+                                {isLoggedIn && c.user_email === userEmail && (
                                     <button
                                         className="comment-close"
                                         title="Delete"
@@ -190,16 +205,21 @@ export const DetailsGame = () => {
                                     </button>
                                 )}
                             </div>
-                        ))}
+                        </div>
 
-                    {isLoggedIn && (
+
+                    ))}
+
+                    {/* Show form only if user has NOT commented */}
+                    {isLoggedIn && !existingComment && (
                         <form className="comment-form" onSubmit={onCommentSubmit}>
-              <textarea
-                  placeholder="Leave your comment..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  required
-              ></textarea>
+                            <textarea
+                                placeholder="Leave your comment..."
+                                value={commentText}
+                                onChange={(e) => setCommentText(e.target.value)}
+                                required
+                            ></textarea>
+
                             <button type="submit" className="btn btn--details">
                                 Submit
                             </button>
@@ -208,84 +228,32 @@ export const DetailsGame = () => {
                 </div>
             </div>
 
-
-            {/* DELETE POPUP – INLINE STYLED, WORKING DELETE */}
             {showDeletePopup && (
-                <div
-                    style={{
-                        position: "fixed",
-                        inset: 0,
-                        backgroundColor: "rgba(0, 0, 0, 0.6)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 9999,
-                    }}
-                >
-                    <div
-                        style={{
-                            backgroundColor: "#fff",
-                            padding: "24px 32px",
-                            borderRadius: "10px",
-                            textAlign: "center",
-                            boxShadow: "0 0 24px rgba(0, 0, 0, 0.4)",
-                            maxWidth: "400px",
-                            width: "90%",
-                        }}
-                    >
-                        <p
-                            style={{
-                                fontSize: "1.2rem",
-                                marginBottom: "20px",
-                                fontWeight: "bold",
-                                color: "#333",
-                            }}
-                        >
-                            Do you want to delete this game?
-                        </p>
+                <div className="popup-overlay">
+                    <div className="popup-box">
+                        <p>Do you want to delete this game?</p>
 
-                        {/* YES BUTTON — CALLS DELETE FUNCTION */}
-                        <button
-                            style={{
-                                padding: "0.6em 1.2em",
-                                fontSize: "1rem",
-                                fontWeight: "bold",
-                                borderRadius: "6px",
-                                border: "none",
-                                cursor: "pointer",
-                                marginRight: "12px",
-                                background: "crimson",
-                                color: "white",
-                            }}
-                            onClick={() => {
-                                onGameDeleteSubmit(gameId);   // ← DELETE FUNCTION
-                                setShowDeletePopup(false);    // ← CLOSE POPUP
-                            }}
-                        >
-                            Yes
-                        </button>
+                        <div className="popup-buttons">
+                            <button
+                                className="btn btn--submit"
+                                onClick={() => {
+                                    onGameDeleteSubmit(gameId);
+                                    setShowDeletePopup(false);
+                                }}
+                            >
+                                Yes
+                            </button>
 
-                        {/* NO BUTTON */}
-                        <button
-                            style={{
-                                padding: "0.6em 1.2em",
-                                fontSize: "1rem",
-                                fontWeight: "bold",
-                                borderRadius: "6px",
-                                border: "none",
-                                cursor: "pointer",
-                                background: "#ccc",
-                                color: "#333",
-                            }}
-                            onClick={() => setShowDeletePopup(false)}
-                        >
-                            No
-                        </button>
+                            <button
+                                className="btn btn--cancel"
+                                onClick={() => setShowDeletePopup(false)}
+                            >
+                                No
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-
-
         </>
     );
 };

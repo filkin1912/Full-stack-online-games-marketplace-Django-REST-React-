@@ -1,10 +1,11 @@
-import {useMemo} from "react";
-import {useBoughtGamesContext} from "../../context/BoughtGamesContext";
-import {useGameContext} from "../../context/GameContext";
-import {GameCard} from "../Catalog/Game/Game";
+import { useMemo } from "react";
+import { useBoughtGamesContext } from "../../context/BoughtGamesContext";
+import { useGameContext } from "../../context/GameContext";
+import { GameCard } from "../Catalog/Game/Game";
+import { CatalogLayout } from "../Shared/CatalogLayout"; // ✅ fixed import path
 
 export const BoughtGames = () => {
-    const {boughtGames} = useBoughtGamesContext();
+    const { boughtGames } = useBoughtGamesContext();
     const {
         searchTerm,
         sort,
@@ -14,19 +15,17 @@ export const BoughtGames = () => {
 
     const hasSearch = searchTerm.trim().length > 0;
 
-    // Base list (search or full)
+    // Filtered list
     const baseList = useMemo(() => {
-        if (!hasSearch) return boughtGames;
-
-        return boughtGames.filter((game) =>
+        if (!hasSearch) return boughtGames || [];
+        return (boughtGames || []).filter((game) =>
             game.title?.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [boughtGames, hasSearch, searchTerm]);
 
-    // Sorting
+    // Sorted list
     const sortedGames = useMemo(() => {
-        let sorted = [...baseList];
-
+        const sorted = [...baseList];
         if (sort === "oldest") {
             sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         } else if (sort === "price") {
@@ -34,56 +33,54 @@ export const BoughtGames = () => {
         } else {
             sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         }
-
         return sorted;
     }, [baseList, sort]);
 
-    // Pagination slicing
+    // Paginated list
     const paginatedGames = useMemo(() => {
         const start = (page - 1) * perPage;
         return sortedGames.slice(start, start + perPage);
     }, [sortedGames, page, perPage]);
 
-    // Early returns
-    if (!boughtGames || boughtGames.length === 0) {
-        return <p className="no-articles">No bought games yet</p>;
-    }
+    const noBought = !boughtGames || boughtGames.length === 0;
+    const noMatch = hasSearch && paginatedGames.length === 0;
 
-    if (hasSearch && paginatedGames.length === 0) {
-        return <p className="no-articles">No such game</p>;
-    }
+    // Total spent
+    const totalSpent = useMemo(() => {
+        return boughtGames?.reduce((sum, game) => sum + Number(game.price || 0), 0) || 0;
+    }, [boughtGames]);
 
     return (
-        <section id="home-page">
-            <h1 className="no-articles--welcome">Bought Games</h1>
+        <CatalogLayout totalItems={sortedGames.length}>
+            <div className="general-app-container">
+                <p className="no-articles no-articles--welcome">
+                    {noBought
+                        ? "NO BOUGHT GAMES"
+                        : noMatch
+                        ? "NO SUCH GAME"
+                        : "BOUGHT GAMES"}
+                </p>
 
-            {/*<div className="game-grid-wrapper">*/}
-            {/*    <section id="welcome-world" className="game-grid">*/}
-            {/*        {paginatedGames.map((game) => (*/}
-            {/*            <GameCard*/}
-            {/*                key={game.id || game._id}*/}
-            {/*                game={game}*/}
-            {/*                hideBuyButton={true}*/}
-            {/*            />*/}
-            {/*        ))}*/}
-            {/*    </section>*/}
-            {/*</div>*/}
-            <div className="game-grid-wrapper">
-                <section id="welcome-world" className="game-grid">
-                    {paginatedGames.map((game) => {
-                        console.log("GAME:", game);   // <-- works correctly
-                        return (
-                            <GameCard
-                                key={game.id || game._id}
-                                game={game}
-                                hideBuyButton={true}
-                            />
-                        );
-                    })}
-                </section>
+                {!noBought && !noMatch && (
+                    <div className="game-grid-wrapper">
+                        <section id="welcome-world" className="game-grid">
+                            {paginatedGames.map((game) => (
+                                <GameCard
+                                    key={game.id || game._id}
+                                    game={game}
+                                    hideBuyButton={true}
+                                />
+                            ))}
+                        </section>
+                    </div>
+                )}
+
+                {!noBought && (
+                    <p className="total-spent-box">
+                        Total spent: <strong>${totalSpent.toFixed(2)}</strong>
+                    </p>
+                )}
             </div>
-
-
-        </section>
+        </CatalogLayout>
     );
 };

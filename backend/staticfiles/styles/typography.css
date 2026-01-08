@@ -9,7 +9,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.2em;
     line-height: 1.2;
     color: var(--color-light);
-    margin-top: 0;            /* ✅ Prevent vertical misalignment */
+    margin-top: 0;
     margin-bottom: 0.4em;
 }
 
@@ -17,17 +17,17 @@ h1, h2, h3, h4, h5, h6 {
 p {
     margin: 0.4em 0;
     color: #545454;
-    font-size: 0.8rem;
+    font-size: var(--font-xs);
     line-height: 1.4;
 }
 
 /* Links */
 a {
-    font-size: 0.8rem;
+    font-size: var(--font-xs);
     font-weight: bold;
     color: inherit;
     text-decoration: none;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--transition-fast);
 }
 
 a:hover {
@@ -37,7 +37,7 @@ a:hover {
 /* Blockquotes */
 blockquote {
     font-style: italic;
-    font-size: 0.8rem;
+    font-size: var(--font-xs);
     color: #444;
     margin: 0.4em;
     padding-left: 0.8em;
@@ -48,16 +48,16 @@ blockquote {
    Empty State Headings
    =========================== */
 .no-articles {
-    font-size: 3rem;
+    font-size: var(--font-display);
     font-family: Georgia, serif;
     font-weight: bold;
     color: var(--color-light);
     text-align: center;
     text-decoration: none;
-    margin-top: -18px;
     margin-bottom: -4px;
+    margin-top: 14px;
 }
 
 .no-articles--welcome {
-    margin-top: -14px;
+    margin-top: -85px;
 }

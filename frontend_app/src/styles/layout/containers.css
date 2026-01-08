@@ -1,0 +1,23 @@
+/* Containers & layout */
+.general-app-container {
+    display: block;
+    padding: var(--space-2xl);
+    box-sizing: border-box;
+}
+
+.game-grid-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 60vh;
+    margin-top: 6px;
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: var(--space-3xl);
+    padding: var(--space-2xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}

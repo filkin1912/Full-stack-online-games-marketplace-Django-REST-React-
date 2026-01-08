@@ -4,7 +4,7 @@ from exam_project.common.models import GameComment, BoughtGame
 
 @admin.register(GameComment)
 class GameCommentAdmin(admin.ModelAdmin):
-    list_display = ('game', 'user', 'text', 'created_at')
+    list_display = ('game', 'user', 'text', 'profile_picture', 'created_at')
     search_fields = ('text', 'user__email', 'game__title')
     list_filter = ('created_at', 'game')
 

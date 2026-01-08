@@ -3,9 +3,8 @@
 {% load placeholders %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 
-    <p class="no-articles">Create Game</p>
+    <p class="no-articles">CREATE GAME</p>
     <section id="general-app-container">
 
         <form method="post" action="{% url 'game create' %}" enctype="multipart/form-data">
@@ -27,7 +26,6 @@
 
             <!-- Picture field -->
             <div class="picture-wrapper">
-                <img class="entity-game-picture" src="{% static 'images/no-image.jpg' %}" alt="game image"/>
                 {{ form.game_picture|attr:"class:form-control file-input" }}
                 {{ form.game_picture.errors }}
             </div>

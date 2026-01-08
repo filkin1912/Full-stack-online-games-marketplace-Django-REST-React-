@@ -1,24 +1,37 @@
-import {Link} from "react-router-dom";
-import {useAuthContext} from "../../../context/AuthContext";
-import {useBoughtGamesContext} from "../../../context/BoughtGamesContext";
+import { Link } from "react-router-dom";
+import { useAuthContext } from "../../../context/AuthContext";
+import { useBoughtGamesContext } from "../../../context/BoughtGamesContext";
+import noImage from "../../../images/no-image.jpg";
 
 export const GameCard = ({
-                             game,
-                             hideButtons = false,
-                             hideBuyButton = false,
-                         }) => {
-    const {isAuthenticated} = useAuthContext();
-    const {buyGame} = useBoughtGamesContext();
+    game,
+    hideButtons = false,
+    hideBuyButton = false,
+}) => {
+    const { isAuthenticated } = useAuthContext();
+    const { buyGame } = useBoughtGamesContext();
 
     if (!game) return null;
 
-    // Normalize image URL
+    // Normalize image URL with strict fallback logic
     const rawImage = game.game_picture;
-    const imageUrl = rawImage
+
+    // Detect invalid backend placeholders
+    const isInvalid =
+        !rawImage ||
+        rawImage.trim() === "" ||
+        rawImage.includes("no-image") ||
+        rawImage.includes("default") ||
+        rawImage === "null" ||
+        rawImage === "undefined" ||
+        rawImage === "None";
+
+    // Final resolved image URL
+    const imageUrl = !isInvalid
         ? rawImage.startsWith("http")
             ? rawImage
             : `${process.env.REACT_APP_API_URL}${rawImage}`
-        : "/images/no-image.jpg";
+        : noImage;
 
     const title = game.title || "Untitled Game";
     const category = game.category || "Unknown Category";
@@ -27,7 +40,7 @@ export const GameCard = ({
     return (
         <div className="game">
             <div className="image-wrap">
-                <img src={imageUrl} alt={title}/>
+                <img src={imageUrl} alt={title} />
             </div>
 
             <h3>{title}</h3>

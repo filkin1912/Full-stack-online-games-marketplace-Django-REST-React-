@@ -1,74 +1,137 @@
-/* ===========================
-   Comment Section Container
-   =========================== */
+/* ==========================================
+   COMMENT SECTION
+   ========================================== */
+
+/* Container */
 .comment-section {
-    margin: 30px auto;
+    flex: 1 1 600px;
     width: 80%;
-    text-align: center;
+    margin: 0 auto;
+    padding: 0;
+    color: var(--color-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible;
 }
 
+/* Headings */
+.comment-section h2,
 .comment-section h3 {
     margin-bottom: 15px;
+    color: var(--color-light);
     text-align: center;
 }
 
-/* ===========================
-   Individual Comment Box
-   =========================== */
+/* ==========================================
+   COMMENT BOX
+   ========================================== */
 .comment-box {
-    display: grid;
-    place-items: center;
-    margin: 10px auto;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    width: 50%;
-    text-align: center;
     position: relative;
+    width: 95%;
+    max-width: 600px;
+    margin: 0 auto 16px auto;
+    padding: 16px 48px 16px 16px;
+    background: var(--bg-glass-dark);
+    border: var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    text-align: left;
 }
 
+/* Force correct text color inside the box */
+.comment-box,
+.comment-box * {
+    color: var(--color-light);
+}
+
+/* Comment text */
 .comment-box p {
     margin: 0;
-    font-size: 14px;
-    text-align: center;
-    /* Optional: handle long words nicely */
+    font-size: var(--font-md);
     overflow-wrap: anywhere;
 }
 
-/* ===========================
-   Close Button
-   =========================== */
+/* Inner layout */
+.comment-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Avatar */
+.comment-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 3%;
+    object-fit: cover;
+    background: #ccc;
+    border: 2px solid var(--color-light);
+}
+
+/* Content */
+.comment-content {
+    flex: 1;
+    font-size: var(--font-md);
+}
+
+/* Email pill */
+.comment-email {
+    display: inline-block;
+    padding: 3px 5px;
+    font-size: 108%;
+    font-weight: bold;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    border: var(--border-white);
+}
+
+/* Delete button */
 .comment-close {
     position: absolute;
     top: 5px;
     right: 5px;
-    background-color: red;
-    color: white;
-    border: none;
-    font-size: 16px;
+    width: 22px;
+    height: 22px;
+    font-size: 20px;
     font-weight: bold;
     cursor: pointer;
-    display: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--color-accent);
+    color: var(--color-light);
+    border: var(--border-soft);
+    border-radius: 20%;
+    box-shadow: var(--shadow-soft);
+    transition: background var(--transition-medium), transform var(--transition-fast);
 }
 
-.comment-box:hover .comment-close {
-    display: block;
+
+.comment-close:hover {
+    background-color: #cc0000;
+    transform: scale(1.1);
 }
 
-/* ===========================
-   Comment Form
-   =========================== */
-.comment-section form {
-    margin-top: 20px;
+/* ==========================================
+   COMMENT FORM
+   ========================================== */
+.comment-form {
+    width: 95%;
+    max-width: 600px;
+    margin: 20px auto 0 auto;
     text-align: center;
-    width: 50%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-.comment-section textarea {
+.comment-form textarea {
     width: 100%;
-    margin: 0 auto;
-    display: block;
+    min-width: 400px;
+    min-height: 120px;
+    padding: 8px 12px;
+    font-size: var(--font-md);
+    background-color: var(--color-light);
+    border-radius: var(--radius-lg);
+    resize: vertical;
 }

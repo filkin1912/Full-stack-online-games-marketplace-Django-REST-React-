@@ -21,7 +21,7 @@ export const requestFactory = (initialToken) => {
 
         const headers = isFormData
             ? {}
-            : {"Content-Type": "application/json"};
+            : { "Content-Type": "application/json" };
 
         const authToken = getToken();
         if (authToken) {
@@ -31,12 +31,14 @@ export const requestFactory = (initialToken) => {
         const options = {
             method,
             headers,
-            body: isFormData ? data : JSON.stringify(data),
         };
+
+        if (data !== undefined && method !== "GET") {
+            options.body = isFormData ? data : JSON.stringify(data);
+        }
 
         return options;
     };
-
 
     const request = async (method, url, data) => {
         const options = buildOptions(method, data);
@@ -48,7 +50,7 @@ export const requestFactory = (initialToken) => {
             : await response.text();
 
         if (!response.ok) {
-            // ✅ Let Django errors (like { email: ["already exists"] }) bubble up
+            // Let backend errors bubble up (e.g. { email: ["already exists"] })
             throw result;
         }
 
@@ -90,7 +92,10 @@ export const requestFactory = (initialToken) => {
             body: formData,
         });
 
-        const result = await response.json();
+        const contentType = response.headers.get("Content-Type") || "";
+        const result = contentType.includes("application/json")
+            ? await response.json()
+            : await response.text();
 
         if (!response.ok) {
             throw result;

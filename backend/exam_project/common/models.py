@@ -25,7 +25,9 @@ class GameComment(models.Model):
     game = models.ForeignKey(GameModel, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     text = models.TextField()
+    profile_picture = models.ImageField(upload_to="comment_pics/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('game', 'user')  # one comment per user per game
+        unique_together = ('game', 'user')
+

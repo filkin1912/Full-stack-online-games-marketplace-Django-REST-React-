@@ -1,280 +1,152 @@
-/* ===========================
-   Global Styles
-   =========================== */
-body {
-  margin: 0;
-  background: url('../images/background_image.jpg') fixed center/cover no-repeat;
-  font-family: Arial, sans-serif;
-  box-sizing: border-box;
+/* Page controllers (selects) */
+.controls-row select,
+.per-page-form select,
+.fixed-paginator select,
+.page-controls select {
+    background-color: var(--color-light);
+    color: black;
+    border: var(--border-light);
+    padding: var(--space-sm) var(--space-xl);
+    border-radius: var(--radius-md);
+    font-size: var(--font-md);
 }
 
-/* ===========================
-   Header & Footer Base
-   =========================== */
-header,
-footer {
-  width: 100%;
-  padding: 0.4em 0.8em;
-  background-color: rgba(42, 73, 128, 0.7);
-  color: var(--color-light);
-}
-
-/* ===========================
-   Header Layout
-   =========================== */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 50px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-header h1 a.home {
-  font-size: 1.6rem;
-  font-family: Georgia, serif;
-  color: var(--color-light);
-  text-decoration: none;
-  border: 2px solid var(--color-light);
-  border-radius: 6px;
-  padding: 4px 10px;
-  background-color: rgba(42, 73, 128, 0.3);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-header h1 a.home:hover {
-  background-color: rgba(42, 73, 128, 0.6);
-  transform: translateY(-2px);
-}
-
-/* ===========================
-   Search Bar
-   =========================== */
-.search-bar {
-  display: flex;
-  align-items: center;
-}
-
-.search-input {
-  padding: 6px 10px;
-  font-size: 1rem;
-  border: 2px solid #ccc;
-  border-radius: 4px 0 0 4px;
-  outline: none;
-}
-
-.search-btn {
-  padding: 6px 14px;
-  font-size: 1rem;
-  border: 2px solid #ccc;
-  border-left: none;
-  border-radius: 0 4px 4px 0;
-  background: var(--color-primary);
-  color: var(--color-light);
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.search-btn:hover {
-  background: var(--color-primary-hover);
-}
-
-.clear-btn {
-  padding: 6px 10px;
-  margin-left: 6px;
-  font-size: 1rem;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  background: #ff4d4d;
-  color: white;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.clear-btn:hover {
-  background: #e60000;
-  transform: translateY(-2px);
-}
-
-/* ===========================
-   Navigation Buttons
-   =========================== */
-nav {
-  display: flex;
-  gap: 12px;
-}
-
+/* Navigation buttons (reinforce) */
 .nav-btn,
 header nav a {
-  display: inline-block;
-  padding: 0.7em 1.12em;
-  background: var(--color-primary);
-  color: var(--color-light);
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 14px;
-  transition: background 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
-  opacity: 0.9;
+    display: inline-block;
+    padding: 0.7em 1.12em;
+    margin: 0;
+    background: var(--color-primary);
+    color: var(--color-light);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    font-size: 14px;
+    transition:
+        background var(--transition-medium),
+        transform var(--transition-fast),
+        opacity var(--transition-medium);
+    opacity: 0.9;
 }
 
 .nav-btn:hover,
 header nav a:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-2px);
-  opacity: 1;
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+    opacity: 1;
 }
 
-/* ===========================
-   Footer
-   =========================== */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  height: 50px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.15em;
-}
-
-footer p {
-  margin: 0;
-  color: #ffffff;
-}
-
-/* ===========================
-   Footer Balance Box
-   =========================== */
-.profile-balance-box {
-  display: inline-block;
-  padding: 6px 12px;
-  border: 1px solid black;
-  border-radius: 4px;
-  background-color: red;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  opacity: 0.9;
-}
-
-/* ===========================
-   Game Grid Layout
-   =========================== */
+/* Game grid layout */
 .general-app-container {
-  padding: 20px;
+    display: block;
+    padding: var(--space-2xl);
+    box-sizing: border-box;
 }
 
 .game-grid-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 60vh;
-  padding: 20px;
-  box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    margin-top: -40px;
 }
 
 .game-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--space-3xl);
+    padding: var(--space-2xl);
+    max-width: 1200px;
 }
 
-/* ===========================
-   Fixed Paginator
-   =========================== */
+/* Fixed paginator */
 .fixed-paginator {
-  position: fixed;
-  bottom: 6px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 6px 12px;
-  background-color: rgba(200, 0, 0, 0.9);
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  max-width: 450px;
-  width: 100%;
+    position: fixed;
+    bottom: 6px;
+    right: 20px;
+    background-color: rgba(200, 0, 0, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 1000;
+    font-weight: bold;
+    font-size: var(--font-md);
+    max-width: 450px;
+    width: 100%;
+    height: 5%;
 }
 
 .fixed-paginator .page-range {
-  margin-right: 10px;
-  white-space: nowrap;
+    color: var(--color-light);
+    margin-right: 10px;
+    white-space: nowrap;
 }
 
 .fixed-paginator .page-controls {
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
 }
 
+/* Page buttons */
 .fixed-paginator .page-btn {
-  background-color: white;
-  color: red;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: var(--color-light);
+    color: red;
+    padding: 2px 8px;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    text-decoration: none;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+    white-space: nowrap;
 }
 
 .fixed-paginator .page-btn:hover {
-  background-color: #ffe6e6;
-  transform: translateY(-1px);
+    background-color: #ffe6e6;
+    transform: translateY(-1px);
 }
 
+/* Disabled */
 .fixed-paginator .page-btn.disabled {
-  background-color: #ccc;
-  color: #666;
-  pointer-events: none;
-  box-shadow: none;
+    background-color: #ccc;
+    color: #666;
+    pointer-events: none;
+    box-shadow: none;
+    cursor: default;
 }
 
+/* Current */
 .fixed-paginator .page-btn.current {
-  background-color: red;
-  color: white;
-  cursor: default;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    background-color: red;
+    color: white;
+    cursor: default;
+    box-shadow: var(--shadow-soft);
 }
 
-/* ===========================
-   Show Per Page Dropdown
-   =========================== */
+/* Show per page */
 .per-page-form {
-  position: fixed;
-  top: 45px;
-  right: 15px;
-  margin: 12px 0;
-  gap: 10px;
-  font-weight: bold;
-  color: white;
+    position: fixed;
+    top: 45px;
+    right: 15px;
+    margin: 12px 0;
+    gap: 10px;
+    font-weight: bold;
+    color: white;
 }
 
 .per-page-form select {
-  padding: 6px 10px;
-  font-size: 1rem;
-  border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: black;
-  border: 1px solid #ccc;
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-md);
+    background-color: var(--color-light);
+    color: black;
+    border: var(--border-light);
 }

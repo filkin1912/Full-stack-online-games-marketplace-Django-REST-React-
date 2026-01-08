@@ -1,28 +1,55 @@
+/* Typography — Global Text Styles */
+
 h1, h2, h3, h4, h5, h6 {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-family: Georgia, "Times New Roman", Times, serif;
     font-weight: 600;
+    font-size: 1.2em;
+    line-height: 1.2;
+    color: var(--color-light);
+    margin-top: 0;
     margin-bottom: 0.4em;
-    font-size: 80%; /* scale heading sizes globally */
-    color: whitesmoke;
 }
 
 p {
     margin: 0.4em 0;
     color: #545454;
-    font-size: 0.8rem;
+    font-size: var(--font-xs);
+    line-height: 1.4;
 }
 
 a {
-    text-decoration: none;
+    font-size: var(--font-xs);
     font-weight: bold;
     color: inherit;
-    font-size: 0.8rem;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+}
+
+a:hover {
+    opacity: 0.8;
 }
 
 blockquote {
     font-style: italic;
+    font-size: var(--font-xs);
+    color: #444;
     margin: 0.4em;
-    font-size: 0.8rem;
+    padding-left: 0.8em;
+    border-left: 3px solid var(--color-primary);
 }
 
+/* Empty state headings */
+.no-articles {
+    font-size: var(--font-display);
+    font-family: Georgia, serif;
+    font-weight: bold;
+    color: var(--color-light);
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: -4px;
+    margin-top: 14px;
+}
 
+.no-articles--welcome {
+    margin-top: -50px;
+}

@@ -29,7 +29,7 @@ class Category(Choices):
 
 
 class GameModel(models.Model):
-    title = models.CharField(max_length=30, unique=True, null=False, blank=False, )
+    title = models.CharField(max_length=24, unique=True, null=False, blank=False, )
     category = models.CharField(max_length=Category.max_len(), choices=Category.choices(), )
     price = models.DecimalField(
         max_digits=5,  # total digits (3 before + 2 after decimal)
@@ -46,9 +46,3 @@ class GameModel(models.Model):
 
     def __str__(self):
         return f'{self.title}  --  {self.category}'
-
-
-# class GameComment(models.Model):
-#     text = models.CharField(max_length=400, null=False, blank=False,)
-#     publication_date_time = models.DateTimeField(auto_now_add=True, null=False, blank=True,)
-#     user = models.ForeignKey(user_model, default=None, on_delete=models.RESTRICT, )

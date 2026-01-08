@@ -1,0 +1,162 @@
+/* ==========================================
+   TWO-COLUMN LAYOUT WRAPPER
+   ========================================== */
+.details-page-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: var(--space-3xl);
+    padding: 32px 20px;
+
+    /* Hide scrollbar when content fits */
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.details-page-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+/* ==========================================
+   TITLE
+   ========================================== */
+.details-page-title {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: -14px;
+}
+
+/* ==========================================
+   GAME DETAILS SECTION
+   ========================================== */
+#game-details {
+    flex: 1 1 600px;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-glass-dark);
+    border: var(--border-light);
+    box-shadow: var(--shadow-medium);
+    text-align: center;
+    margin: 0;
+}
+
+/* Inner layout */
+.game-details-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xl);
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.game-picture-block {
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.game-info-block {
+    flex: 1 1 300px;
+    max-width: 500px;
+    text-align: left;
+}
+
+.game-info-block h2 {
+    font-size: var(--font-title);
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--color-light);
+}
+
+/* ==========================================
+   INFO TABLE
+   ========================================== */
+.game-info-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 16px;
+    border: 1px solid grey;
+    background: rgba(40, 44, 43, 0.8);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.game-info-table th,
+.game-info-table td {
+    padding: 10px 14px;
+    font-size: var(--font-md);
+    font-weight: bold;
+    color: var(--color-light);
+    text-align: left;
+}
+
+.game-info-table thead {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.game-info-table tbody tr {
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: var(--shadow-soft);
+}
+
+/* ==========================================
+   ACTION BUTTONS
+   ========================================== */
+.buttons {
+    margin-top: 16px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ==========================================
+   GO BACK BUTTON
+   ========================================== */
+.go-back-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px 8px 15px;
+    background: #e8e2e2 !important;
+    border: 3px solid #d9d1d1 !important;
+    border-radius: 5%;
+    color: black;
+    font-size: var(--font-md);
+    font-weight: bold;
+    text-decoration: none;
+    opacity: 1 !important;
+    z-index: 10;
+    overflow: visible;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    transition: transform var(--transition-fast);
+}
+
+.go-back-btn:hover {
+    transform: scale(1.05);
+}
+
+.go-back-text {
+    font-size: var(--font-md);
+    font-weight: bold;
+}
+
+.go-back-icon {
+    position: absolute;
+    top: 50%;
+    right: -17px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    background: #fefefe !important;
+    border: 3px solid #fefefe !important;
+    opacity: 1 !important;
+    z-index: 10;
+    box-shadow: var(--shadow-soft);
+}

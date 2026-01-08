@@ -24,6 +24,6 @@ class UserAdmin(auth_admin.UserAdmin):
         }),
     )
 
-    list_display = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')  # ✅ added 'id'
+    list_display = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'profile_picture')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)

@@ -8,7 +8,7 @@ export const Header = () => {
     const {
         handleSearch,
         refreshGames,
-        resetPagination, // ✅ added
+        resetPagination,
     } = useGameContext();
 
     const location = useLocation();
@@ -19,18 +19,18 @@ export const Header = () => {
     const onSearchSubmit = (e) => {
         e.preventDefault();
         handleSearch(searchValue.trim());
-        resetPagination(); // ✅ ensures search starts from page 1
+        resetPagination();
     };
 
     const resetSearch = () => {
         setSearchValue("");
         handleSearch("");
-        resetPagination(); // ✅ ensures reset starts from page 1
+        resetPagination();
     };
 
     const seedGames = async () => {
         try {
-            const res = await fetch("http://localhost:8001/api/games/seed/", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/games/seed/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -45,13 +45,14 @@ export const Header = () => {
             alert("20 games created successfully!");
             await refreshGames();
             handleSearch("");
-            resetPagination(); // ✅ optional: reset after seeding
+            resetPagination();
             navigate("/");
         } catch (err) {
-            console.error(err);
+            console.error("SEED ERROR:", err);
             alert("Error creating games");
         }
     };
+
 
     return (
         <header>
@@ -78,7 +79,7 @@ export const Header = () => {
                         {searchValue && (
                             <button
                                 type="button"
-                                className="clear-btn"
+                                className="search-btn"
                                 onClick={resetSearch}
                             >
                                 Clear
@@ -91,8 +92,22 @@ export const Header = () => {
             <nav>
                 {isAuthenticated ? (
                     <>
-                        <button onClick={seedGames} className="nav-btn">SEED Games</button>
-                        <button onClick={onLogout} className="nav-btn">LogOut</button>
+                        <Link
+                            to="#"
+                            onClick={seedGames}
+                            className="nav-btn"
+                        >
+                            SEED Games
+                        </Link>
+
+                        <Link
+                            to="#"
+                            onClick={onLogout}
+                            className="nav-btn"
+                        >
+                            LogOut
+                        </Link>
+
                         <Link to="/bought-games" className="nav-btn">Bought games</Link>
                         <Link to="/my-games" className="nav-btn">My games</Link>
                         <Link to="/create" className="nav-btn">Create Game</Link>

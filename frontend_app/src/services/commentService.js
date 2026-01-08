@@ -1,6 +1,7 @@
 import {requestFactory} from "./requester";
 
-const baseUrl = "http://127.0.0.1:8001/api/common/comments";
+const baseUrl = `${process.env.REACT_APP_API_URL}/api/common/comments`;
+
 const request = requestFactory();
 
 // Fetch all comments for a specific game

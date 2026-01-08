@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic as views
 from django.views.decorators.http import require_POST
 from datetime import datetime
+import random
+from decimal import Decimal
 
 from exam_project.common.models import BoughtGame, GameComment
 from exam_project.common.forms import GameCommentForm
@@ -40,6 +42,7 @@ class IndexView(Pagination, SortingMixin, views.ListView):
             'per_page': self.get_paginate_by(qs),
             'per_page_options': self.PER_PAGE_OPTIONS,
             'sort': self.request.GET.get('sort', 'newest'),
+            'show_controls': True,  # ✅ This enables the controls in base.html
         })
 
         page_obj = context['page_obj']
@@ -67,12 +70,20 @@ class BoughtGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListVi
         total_spent = sum(bg.game.price for bg in qs)
 
         context.update({
-            'per_page': self.get_paginate_by(qs),
-            'per_page_options': self.PER_PAGE_OPTIONS,
-            'sort': self.request.GET.get('sort', 'newest'),
+            'search_query': self.request.GET.get('q', ''),   # ✅ added
+            'per_page': self.get_paginate_by(qs),            # ✅ added
+            'per_page_options': self.PER_PAGE_OPTIONS,       # ✅ added
+            'sort': self.request.GET.get('sort', 'newest'),  # ✅ added
+            'show_controls': True,                           # ✅ added
             'hide_buttons': True,
             'total_spent': total_spent,
         })
+
+        page_obj = context['page_obj']
+        if page_obj.paginator.count == 0:
+            context['no_games_yet'] = True
+        elif context['search_query'] and not page_obj.object_list:
+            context['no_match'] = True
 
         return context
 
@@ -101,6 +112,7 @@ class MyGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListView):
             'per_page_options': self.PER_PAGE_OPTIONS,
             'sort': self.request.GET.get('sort', 'newest'),
             'hide_button_buy': True,
+            'show_controls': True,
         })
 
         page_obj = context['page_obj']
@@ -110,6 +122,7 @@ class MyGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListView):
             context['no_match'] = True
 
         return context
+
 
 
 @login_required
@@ -141,30 +154,31 @@ def game_details(request, pk):
     is_bought = BoughtGame.objects.filter(user=user, game=game).exists()
 
     # All comments already prefetched
-    comments = list(game.gamecomment_set.all())
+    comments = list(game.gamecomment_set.all().order_by("created_at"))
     existing_comment = next((c for c in comments if c.user_id == user.id), None)
 
-    # Handle comment submission
-    if request.method == 'POST' and not existing_comment:
+    if request.method == "POST" and not existing_comment:
         form = GameCommentForm(request.POST)
         if form.is_valid():
+            # 1:1 with CommentListCreateApiView.perform_create
             comment = form.save(commit=False)
             comment.user = user
             comment.game = game
+            comment.profile_picture = user.profile_picture  # same as serializer.save(profile_picture=user.profile_picture)
             comment.save()
-            return redirect('game details', pk=pk)
+            return redirect("game details", pk=pk)
     else:
         form = None if existing_comment else GameCommentForm()
 
     context = {
-        'game': game,
-        'is_owner': is_owner,
-        'is_bought': is_bought,
-        'form': form,
-        'existing_comment': existing_comment,
-        'comments': comments,
+        "game": game,
+        "is_owner": is_owner,
+        "is_bought": is_bought,
+        "form": form,
+        "existing_comment": existing_comment,
+        "comments": comments,
     }
-    return render(request, 'game/details-game.html', context)
+    return render(request, "game/details-game.html", context)
 
 
 @login_required
@@ -222,11 +236,9 @@ def game_delete(request, pk):
 
 @login_required
 def seed_games(request):
-    import random
-    from decimal import Decimal
 
     categories = [c[0] for c in GameModel._meta.get_field("category").choices]
-    now = datetime.now().strftime("%Y%m%d-%H%M%S")
+    now = datetime.now().strftime("%m%d%H%M%S")
 
     GameModel.objects.bulk_create([
         GameModel(

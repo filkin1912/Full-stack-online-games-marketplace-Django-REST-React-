@@ -1,10 +1,10 @@
-import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {useGameContext} from "../../context/GameContext";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useGameContext } from "../../context/GameContext";
 import noImage from "../../images/no-image.jpg";
 
 export const CreateGame = () => {
-    const {onCreateGameSubmit} = useGameContext();
+    const { onCreateGameSubmit } = useGameContext();
     const navigate = useNavigate();
 
     const [formValues, setFormValues] = useState({
@@ -19,8 +19,8 @@ export const CreateGame = () => {
     const [error, setError] = useState(null);
 
     const changeHandler = (e) => {
-        const {name, value} = e.target;
-        setFormValues((prev) => ({...prev, [name]: value}));
+        const { name, value } = e.target;
+        setFormValues((prev) => ({ ...prev, [name]: value }));
     };
 
     const fileChangeHandler = (e) => {
@@ -63,30 +63,28 @@ export const CreateGame = () => {
     };
 
     return (
-        <section id="create-page" className="auth">
-            <form id="create" method="post" onSubmit={onSubmit} encType="multipart/form-data">
-                <div className="container">
-                    <h1>CREATE GAME</h1>
+        <div id="box">
+            <p className="no-articles">CREATE GAME</p>
 
+            <section id="general-app-container">
+                <form method="post" onSubmit={onSubmit} encType="multipart/form-data">
                     {error && <p className="error">{error}</p>}
 
                     {/* Title */}
-                    <label htmlFor="title">TITLE:</label>
                     <input
+                        type="text"
+                        name="title"
+                        placeholder="Write title"
+                        className="form-control"
                         value={formValues.title}
                         onChange={changeHandler}
-                        type="text"
-                        id="title"
-                        name="title"
-                        placeholder="Enter game title..."
                         required
                     />
 
-                    {/* Category (matching Django choices enum) */}
-                    <label htmlFor="category">CATEGORY:</label>
+                    {/* Category */}
                     <select
-                        id="category"
                         name="category"
+                        className="form-control"
                         value={formValues.category}
                         onChange={changeHandler}
                         required
@@ -101,52 +99,49 @@ export const CreateGame = () => {
                         <option value="OTHER">Other</option>
                     </select>
 
-                    {/* Image upload */}
-                    <label htmlFor="game_picture">IMAGE:</label>
+                    {/* Price */}
+                    <input
+                        type="number"
+                        name="price"
+                        placeholder="Price"
+                        className="form-control"
+                        value={formValues.price}
+                        onChange={changeHandler}
+                        min="10"
+                        max="999.99"
+                        step="0.01"
+                        required
+                    />
+
+                    {/* Picture field */}
                     <div className="picture-wrapper">
                         <img
                             className="entity-game-picture"
                             src={previewUrl}
-                            alt="game"
+                            alt="game preview"
                         />
                         <input
                             type="file"
-                            id="game_picture"
                             name="game_picture"
                             accept="image/*"
-                            className="file-input"
+                            className="form-control file-input"
                             onChange={fileChangeHandler}
                         />
                     </div>
 
                     {/* Summary */}
-                    <label htmlFor="summary">SUMMARY:</label>
                     <textarea
                         name="summary"
-                        id="summary"
+                        placeholder="Summary"
+                        className="form-control"
                         value={formValues.summary}
                         onChange={changeHandler}
-                        placeholder="Enter game summary..."
                     />
 
-                    {/* Price */}
-                    <label htmlFor="price">PRICE:</label>
-                    <input
-                        value={formValues.price}
-                        onChange={changeHandler}
-                        type="number"
-                        id="price"
-                        name="price"
-                        min="10"
-                        max="999.99"
-                        step="0.01"
-                        placeholder="10.00"
-                        required
-                    />
-
-                    <input className="btn submit" type="submit" value="CREATE GAME"/>
-                </div>
-            </form>
-        </section>
+                    {/* Submit */}
+                    <input className="btn submit" type="submit" value="Create Game" />
+                </form>
+            </section>
+        </div>
     );
 };

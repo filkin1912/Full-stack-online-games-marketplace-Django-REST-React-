@@ -26,4 +26,11 @@ class AppUserSerializer(serializers.ModelSerializer):
 class AppUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
-        fields = ("id", "first_name", "last_name", "email", "money", "profile_picture")
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "money",
+            "profile_picture"
+        )
