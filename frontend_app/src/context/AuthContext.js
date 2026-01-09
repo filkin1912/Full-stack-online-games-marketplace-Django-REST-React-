@@ -1,17 +1,19 @@
-import {createContext, useContext, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
-import {useLocalStorage} from "../hooks/useLocalStorage";
-import {authServiceFactory} from "../services/authService";
-import {userServiceFactory} from "../services/userService";
+import { createContext, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { authServiceFactory } from "../services/authService";
+import { userServiceFactory } from "../services/userService";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
+export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const [auth, setAuth] = useLocalStorage("authKey", {});
     const authService = authServiceFactory(auth.accessToken);
 
-    // Fetch full user profile
+    // =====================================================
+    // Fetch full user profile from backend
+    // =====================================================
     const fetchUserDetails = async (token, fallbackEmail) => {
         const userService = userServiceFactory(token);
         const user = await userService.getUser();
@@ -27,14 +29,18 @@ export const AuthProvider = ({children}) => {
         };
     };
 
-    // Refresh user data
+    // =====================================================
+    // Refresh user data (used after buying games, editing profile, etc.)
+    // =====================================================
     const refreshUser = async () => {
         if (!auth.accessToken) return;
         const userDetails = await fetchUserDetails(auth.accessToken, auth.email);
-        setAuth((prev) => ({...prev, ...userDetails}));
+        setAuth((prev) => ({ ...prev, ...userDetails }));
     };
 
+    // =====================================================
     // Login
+    // =====================================================
     const onLoginSubmit = async (data) => {
         try {
             const result = await authService.login(data);
@@ -47,18 +53,22 @@ export const AuthProvider = ({children}) => {
             setAuth(authData);
 
             const userDetails = await fetchUserDetails(result.access, data.email);
-            setAuth({...authData, ...userDetails});
+            setAuth({ ...authData, ...userDetails });
 
             navigate("/");
             return {};
         } catch (err) {
-            return {general: err?.detail || err?.message || "Login failed"};
+            return {
+                general: err?.detail || err?.message || "Login failed",
+            };
         }
     };
 
+    // =====================================================
     // Register
+    // =====================================================
     const onRegisterSubmit = async (values) => {
-        const {confirmPassword, password, email} = values;
+        const { confirmPassword, password, email } = values;
         const errors = {};
 
         if (!email?.trim()) errors.email = "Email is required";
@@ -69,8 +79,8 @@ export const AuthProvider = ({children}) => {
         if (Object.keys(errors).length > 0) return errors;
 
         try {
-            await authService.register({email, password});
-            const loginResult = await authService.login({email, password});
+            await authService.register({ email, password });
+            const loginResult = await authService.login({ email, password });
 
             const authData = {
                 accessToken: loginResult.access,
@@ -80,23 +90,27 @@ export const AuthProvider = ({children}) => {
             setAuth(authData);
 
             const userDetails = await fetchUserDetails(loginResult.access, email);
-            setAuth({...authData, ...userDetails});
+            setAuth({ ...authData, ...userDetails });
 
             navigate("/");
             return {};
         } catch (err) {
-            return {general: err?.message || "Registration failed"};
+            return { general: err?.message || "Registration failed" };
         }
     };
 
+    // =====================================================
     // Logout
+    // =====================================================
     const onLogout = () => {
         localStorage.removeItem("authKey");
         setAuth({});
         navigate("/");
     };
 
-    // Update user
+    // =====================================================
+    // Update user profile
+    // =====================================================
     const onUserEditSubmit = async (values) => {
         try {
             const userService = userServiceFactory(auth.accessToken);
@@ -112,7 +126,9 @@ export const AuthProvider = ({children}) => {
         }
     };
 
+    // =====================================================
     // Delete user
+    // =====================================================
     const onUserDelete = async (userId) => {
         try {
             const userService = userServiceFactory(auth.accessToken);
@@ -124,7 +140,9 @@ export const AuthProvider = ({children}) => {
         }
     };
 
-    // Increment owned games count
+    // =====================================================
+    // Local-only helpers (UI updates)
+    // =====================================================
     const incrementGamesCount = () => {
         setAuth((prev) => ({
             ...prev,
@@ -132,7 +150,6 @@ export const AuthProvider = ({children}) => {
         }));
     };
 
-    // Deduct money
     const deductMoney = (amount) => {
         setAuth((prev) => ({
             ...prev,
@@ -140,10 +157,14 @@ export const AuthProvider = ({children}) => {
         }));
     };
 
+    // Debug log
     useEffect(() => {
         console.log("🔍 AuthContext updated:", auth);
     }, [auth]);
 
+    // =====================================================
+    // Context Values
+    // =====================================================
     const contextValues = {
         onLoginSubmit,
         onRegisterSubmit,

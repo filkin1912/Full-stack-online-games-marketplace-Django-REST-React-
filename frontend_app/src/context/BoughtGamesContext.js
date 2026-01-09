@@ -18,25 +18,37 @@ export const BoughtGamesProvider = ({ children }) => {
         return boughtGamesServiceFactory(token);
     }, [token]);
 
+    // Persist to localStorage
     useEffect(() => {
         localStorage.setItem("boughtGames", JSON.stringify(boughtGames));
     }, [boughtGames]);
 
+    // Initial fetch on login/token change
     useEffect(() => {
         if (!token) return;
-
-        boughtGamesService
-            .getAll()
-            .then((result) => {
-                console.log("✅ API response:", result);
-                const extractedGames = (result?.results || [])
-                    .map((record) => record.game || record)
-                    .filter(Boolean);
-                setBoughtGames(extractedGames);
-            })
-            .catch((err) => console.error("Error fetching bought games:", err));
+        fetchBoughtGames();
     }, [token, boughtGamesService]);
 
+    // =====================================================
+    // Fetch bought games from backend (needed for Header.js)
+    // =====================================================
+    const fetchBoughtGames = async () => {
+        try {
+            const result = await boughtGamesService.getAll();
+
+            const extractedGames = (result?.results || [])
+                .map((record) => record.game || record)
+                .filter(Boolean);
+
+            setBoughtGames(extractedGames);
+        } catch (err) {
+            console.error("Error fetching bought games:", err);
+        }
+    };
+
+    // =====================================================
+    // Buy game
+    // =====================================================
     const buyGame = async (game) => {
         if (String(game.user) === String(userId)) {
             alert("You cannot buy your own game");
@@ -79,6 +91,7 @@ export const BoughtGamesProvider = ({ children }) => {
         boughtGames,
         buyGame,
         setBoughtGames,
+        fetchBoughtGames, // 🔥 added for Header.js
     };
 
     return (

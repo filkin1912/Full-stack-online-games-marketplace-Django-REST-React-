@@ -1,6 +1,13 @@
-from rest_framework import generics, filters, status, permissions
-from rest_framework.response import Response
+from datetime import datetime
+import random
+from decimal import Decimal
+
 from django.db import transaction
+from django.core.management import call_command
+
+from rest_framework import generics, filters, status, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .models import GameModel
 from exam_project.common.models import BoughtGame
@@ -11,9 +18,6 @@ from .permission_mixins import (
     GameQuerysetMixin,
     MyGamesQuerysetMixin,
 )
-from datetime import datetime
-import random
-from decimal import Decimal
 
 
 # =====================================================
@@ -27,7 +31,6 @@ class GamesListCreateApiView(GameQuerysetMixin, generics.ListCreateAPIView):
     ordering = ['-id']
 
     def get_permissions(self):
-        # Anyone can view games, only authenticated users can create
         if self.request.method == 'POST':
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
@@ -45,7 +48,6 @@ class GameRetrieveUpdateDeleteApiView(
     generics.RetrieveUpdateDestroyAPIView
 ):
     def get_permissions(self):
-        # Editing requires authentication; viewing is public
         if self.request.method in ('PATCH', 'PUT', 'DELETE'):
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
@@ -77,27 +79,27 @@ class GameBuyApiView(IsAuthenticatedMixin, generics.CreateAPIView):
             except GameModel.DoesNotExist:
                 return Response({"detail": "Game not found."}, status=status.HTTP_404_NOT_FOUND)
 
-            seller = game.user
-
-            # Already purchased?
+            # Already bought?
             if BoughtGame.objects.filter(user=buyer, game=game).exists():
                 return Response({"detail": "Already purchased."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Enough money?
+            # Check funds
             if buyer.money < game.price:
                 return Response({"detail": "Insufficient funds."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Money transfer
+            # Deduct from buyer
             buyer.money -= game.price
             buyer.save(update_fields=['money'])
 
-            seller.money += game.price
-            seller.save(update_fields=['money'])
+            # Pay seller ONLY if seller exists
+            seller = game.user
+            if seller is not None:
+                seller.money += game.price
+                seller.save(update_fields=['money'])
 
             # Create purchase record
             BoughtGame.objects.create(user=buyer, game=game)
 
-        # Return full game data (same shape as Home.js)
         serializer = GameSerializer(game, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -122,15 +124,12 @@ class BoughtGamesListApiView(IsAuthenticatedMixin, generics.ListAPIView):
 # SEED GAMES (AUTH ONLY)
 # =====================================================
 class SeedGamesApiView(IsAuthenticatedMixin, generics.CreateAPIView):
-    serializer_class = GameSerializer  # not used for creation, but keeps consistency
+    serializer_class = GameSerializer  # not used for creation
 
     def post(self, request, *args, **kwargs):
         categories = [c[0] for c in GameModel._meta.get_field("category").choices]
-
-        # Timestamp for uniqueness
         now = datetime.now().strftime("%Y%m%d-%H%M%S")
 
-        # Create 20 auto-generated games
         GameModel.objects.bulk_create([
             GameModel(
                 title=f"Game {i} - {now}"[:24],
@@ -146,3 +145,35 @@ class SeedGamesApiView(IsAuthenticatedMixin, generics.CreateAPIView):
             {"detail": "20 games created successfully."},
             status=status.HTTP_201_CREATED
         )
+
+
+# =====================================================
+# LOAD GAMES (AUTH ONLY)
+# =====================================================
+class LoadGamesApiView(IsAuthenticatedMixin, APIView):
+    """
+    Loads initial_games.json only if no games exist.
+    If the database becomes empty again later, loading is allowed again.
+    """
+
+    def post(self, request, *args, **kwargs):
+        # If games exist, block loading
+        if GameModel.objects.exists():
+            return Response(
+                {"detail": "Games already exist. Loading skipped."},
+                status=status.HTTP_200_OK
+            )
+
+        try:
+            call_command("loaddata", "initial_games.json")
+
+            return Response(
+                {"detail": "Initial games loaded successfully."},
+                status=status.HTTP_201_CREATED
+            )
+
+        except Exception as e:
+            return Response(
+                {"detail": f"Error loading games: {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

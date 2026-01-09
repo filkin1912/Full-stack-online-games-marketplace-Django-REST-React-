@@ -145,7 +145,7 @@ export const DetailsGame = () => {
                             </table>
 
                             <div className="buttons">
-                                {isOwner ? (
+                                {isOwner && (
                                     <>
                                         <button
                                             className="btn btn--submit"
@@ -161,17 +161,18 @@ export const DetailsGame = () => {
                                             Delete
                                         </button>
                                     </>
-                                ) : (
-                                    <Link to="/" className="go-back-btn">
-                                        <span className="go-back-text">Go back&nbsp;</span>
-                                        <img
-                                            src={goBackIcon}
-                                            alt="Go back"
-                                            className="go-back-icon"
-                                        />
-                                    </Link>
                                 )}
+
+                                <Link to="/" className="go-back-btn">
+                                    <span className="go-back-text">Go back&nbsp;</span>
+                                    <img
+                                        src={goBackIcon}
+                                        alt="Go back"
+                                        className="go-back-icon"
+                                    />
+                                </Link>
                             </div>
+
                         </div>
                     </div>
                 </section>

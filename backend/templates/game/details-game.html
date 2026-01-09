@@ -64,6 +64,10 @@
                     {% if is_owner %}
                         <a href="{% url 'game edit' pk=game.pk %}" class="btn btn--submit">Edit</a>
                         <button class="btn btn--submit" onclick="showDeletePopup()">Delete</button>
+                        <a href="{% url 'index' %}" class="go-back-btn">
+                            <span class="go-back-text">Go back&nbsp;</span>
+                            <img src="{% static 'images/go-back.jpg' %}" alt="Go back icon" class="go-back-icon">
+                        </a>
                     {% else %}
                         <a href="{% url 'index' %}" class="go-back-btn">
                             <span class="go-back-text">Go back&nbsp;</span>

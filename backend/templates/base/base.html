@@ -27,7 +27,8 @@
 
         <nav>
             {% if request.user.is_authenticated %}
-                <a href="{% url 'seed games' %}" class="nav-bnt">SEED Games</a>
+                <a href="{% url 'load games' %}" class="nav-bnt">Load games</a>
+                <a href="{% url 'seed games' %}" class="nav-bnt">Seed games</a>
                 <a href="{% url 'profile logout' %}" class="nav-btn">LogOut</a>
                 <a href="{% url 'bought games' %}" class="nav-btn">Bought games</a>
                 <a href="{% url 'my games' pk=request.user.pk %}" class="nav-btn">My games</a>

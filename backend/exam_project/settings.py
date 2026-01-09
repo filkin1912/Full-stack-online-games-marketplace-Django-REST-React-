@@ -29,7 +29,6 @@ SECRET_KEY = os.getenv(
 DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
-# Separate session cookies for local vs docker if env is set
 SESSION_COOKIE_NAME = os.getenv("SESSION_COOKIE_NAME", "sessionid")
 
 # ==========================
@@ -42,12 +41,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "widget_tweaks",
     "rest_framework",
-
     "rest_framework_simplejwt",
-
     "corsheaders",
+
+    # Project apps (ONLY THESE)
     "exam_project.accounts",
     "exam_project.games",
     "exam_project.common",
@@ -107,6 +107,13 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
+
+# ==========================
+# Fixtures (IMPORTANT)
+# ==========================
+FIXTURE_DIRS = [
+    BASE_DIR / "games" / "fixtures",
+]
 
 # ==========================
 # CORS & CSRF

@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
-import {useGameContext} from "../../context/GameContext";
-import {useService} from "../../hooks/useService";
-import {gameServiceFactory} from "../../services/gameService";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useGameContext } from "../../context/GameContext";
+import { useService } from "../../hooks/useService";
+import { gameServiceFactory } from "../../services/gameService";
 import noImage from "../../images/no-image.jpg";
 
 export const EditGame = () => {
-    const {onGameEditSubmit} = useGameContext();
-    const {gameId} = useParams();
+    const { onGameEditSubmit } = useGameContext();
+    const { gameId } = useParams();
     const navigate = useNavigate();
     const gameService = useService(gameServiceFactory);
 
@@ -23,38 +23,34 @@ export const EditGame = () => {
     const [error, setError] = useState(null);
     const [imageDeleted, setImageDeleted] = useState(false);
 
-    // Convert imported noImage into a File object
     const urlToFile = async (url, filename) => {
         const res = await fetch(url);
         const blob = await res.blob();
-        return new File([blob], filename, {type: blob.type});
+        return new File([blob], filename, { type: blob.type });
     };
 
     useEffect(() => {
         const loadGame = async () => {
             try {
                 const game = await gameService.getOne(gameId);
-
                 setFormValues({
                     title: game.title || "",
                     category: game.category || "",
                     price: game.price?.toString() || "",
                     summary: game.summary || "",
                 });
-
                 setPreviewUrl(game.game_picture || noImage);
             } catch (err) {
                 console.error("Failed to load game:", err);
                 setError("Game not found or failed to load.");
             }
         };
-
         loadGame();
     }, [gameId]);
 
     const changeHandler = (e) => {
-        const {name, value} = e.target;
-        setFormValues((prev) => ({...prev, [name]: value}));
+        const { name, value } = e.target;
+        setFormValues((prev) => ({ ...prev, [name]: value }));
     };
 
     const fileChangeHandler = (e) => {
@@ -79,8 +75,6 @@ export const EditGame = () => {
         e.preventDefault();
         setError(null);
 
-        console.log("Form values before submit:", formValues);
-
         const formData = new FormData();
         formData.append("title", formValues.title);
         formData.append("category", formValues.category);
@@ -91,7 +85,6 @@ export const EditGame = () => {
             formData.append("game_picture", selectedFile);
         }
 
-        // If image was deleted, send default noImage file
         if (imageDeleted && !selectedFile) {
             const defaultFile = await urlToFile(noImage, "no-image.jpg");
             formData.append("game_picture", defaultFile);
@@ -102,71 +95,32 @@ export const EditGame = () => {
             navigate(`/catalog/${gameId}`);
         } catch (err) {
             console.error("Edit game error:", err);
-            setError(
-                err?.message ||
-                (typeof err === "string" ? err : "Failed to edit game")
-            );
+            setError(err?.message || "Failed to edit game");
         }
     };
 
     return (
-        <section id="create-page" className="auth">
-            <form
-                id="create"
-                method="post"
-                onSubmit={onSubmit}
-                encType="multipart/form-data"
-            >
-                <div className="container">
-                    <h1>EDIT GAME</h1>
+        <section id="edit-game-container">
+            <form method="post" onSubmit={onSubmit} encType="multipart/form-data">
+                <p className="no-articles no-articles--welcome no-articles--edit-game">EDIT GAME</p>
+                {error && <p className="error">{error}</p>}
 
-                    {error && <p className="error">{error}</p>}
-
-                    <label htmlFor="title">TITLE:</label>
-                    <input
-                        value={formValues.title}
-                        onChange={changeHandler}
-                        type="text"
-                        id="title"
-                        name="title"
-                        placeholder="Enter game title..."
-                        required
-                    />
-
-                    <label htmlFor="category">CATEGORY:</label>
-                    <select
-                        id="category"
-                        name="category"
-                        value={formValues.category}
-                        onChange={changeHandler}
-                        required
-                    >
-                        <option value="">Select category...</option>
-                        <option value="ACTION">Action</option>
-                        <option value="ADVENTURE">Adventure</option>
-                        <option value="PUZZLE">Puzzle</option>
-                        <option value="STRATEGY">Strategy</option>
-                        <option value="SPORTS">Sports</option>
-                        <option value="BOARD">Board/Card Game</option>
-                        <option value="OTHER">Other</option>
-                    </select>
-
-                    <label htmlFor="game_picture">IMAGE:</label>
-                    <div className="picture-wrapper">
+                <div className="edit-game-wrapper">
+                    {/* Left Column: Image */}
+                    <div className="edit-game-left">
                         <img
-                            className="entity-game-picture"
                             src={previewUrl}
-                            alt="game"
+                            alt="Game"
+                            className={`profile-img ${previewUrl === noImage ? "no-image" : ""}`}
                         />
                         <input
                             type="file"
-                            id="game_picture"
                             name="game_picture"
+                            id="game_picture"
                             accept="image/*"
-                            className="file-input"
+                            className="form-control"
                             onChange={fileChangeHandler}
                         />
-
                         {previewUrl !== noImage && (
                             <button
                                 type="button"
@@ -178,30 +132,58 @@ export const EditGame = () => {
                         )}
                     </div>
 
-                    <label htmlFor="summary">SUMMARY:</label>
-                    <textarea
-                        name="summary"
-                        id="summary"
-                        value={formValues.summary}
-                        onChange={changeHandler}
-                        placeholder="Enter game summary..."
-                    />
+                    {/* Right Column: Form Fields */}
+                    <div className="edit-game-right">
+                        <input
+                            type="text"
+                            name="title"
+                            value={formValues.title}
+                            onChange={changeHandler}
+                            className="form-control"
+                            placeholder="Enter game title..."
+                            required
+                        />
 
-                    <label htmlFor="price">PRICE:</label>
-                    <input
-                        value={formValues.price}
-                        onChange={changeHandler}
-                        type="number"
-                        id="price"
-                        name="price"
-                        min="10"
-                        max="999.99"
-                        step="0.01"
-                        placeholder="10.00"
-                        required
-                    />
+                        <select
+                            name="category"
+                            value={formValues.category}
+                            onChange={changeHandler}
+                            className="form-control"
+                            required
+                        >
+                            <option value="">Select category...</option>
+                            <option value="ACTION">Action</option>
+                            <option value="ADVENTURE">Adventure</option>
+                            <option value="PUZZLE">Puzzle</option>
+                            <option value="STRATEGY">Strategy</option>
+                            <option value="SPORTS">Sports</option>
+                            <option value="BOARD">Board/Card Game</option>
+                            <option value="OTHER">Other</option>
+                        </select>
 
-                    <input className="btn submit" type="submit" value="EDIT GAME"/>
+                        <input
+                            type="number"
+                            name="price"
+                            value={formValues.price}
+                            onChange={changeHandler}
+                            className="form-control"
+                            min="10"
+                            max="999.99"
+                            step="0.01"
+                            placeholder="10.00"
+                            required
+                        />
+
+                        <textarea
+                            name="summary"
+                            value={formValues.summary}
+                            onChange={changeHandler}
+                            className="form-control"
+                            placeholder="Enter game summary..."
+                        />
+
+                        <input className="btn submit" type="submit" value="Edit Game" />
+                    </div>
                 </div>
             </form>
         </section>

@@ -39,7 +39,8 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 
 ---
 
-## 🧑‍💻 Option 2: Run the project locally (using PostgreSQL database running in Docker)
+## 🧑‍💻 Option 2: Run the project locally 
+**(to use PostgreSQL database running in Docker 1st is needed 'docker compose up -d' to be executed and then from Docker Desktop container stop - `gamesplay-backend-1` and `gamesplay-frontend-1`, only `project_dbcontainer` should be running)**
 
 ## 🐍 START Backend – Local Setup (Django on :8000)
 
@@ -48,7 +49,7 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 |-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | **Go to the frontend folder**             | `...\Full-stack-online-games-marketplace-Django-REST-React-\backend`                                                                      |
 | **1️⃣ Create & activate virtual environment** | `python -m venv venv`<br>`source venv/bin/activate` (Linux/macOS)<br>`venv\Scripts\Activate.ps1` or `venv\Scripts\activate.bat` (Windows) |
-| **2️⃣ Install dependencies**              | `pip install -r requirements.txt`                                                                                                         |
+| ~~**2️⃣ Install dependencies**~~              | ~~`pip install -r requirements.txt`~~                                                                                                         |
 | **3️⃣ Apply database migrations**         | `python manage.py migrate`                                                                                                                |
 | **4️⃣ Create admin user**                 | `python manage.py createsuperuser`                                                                                                        |
 | **5️⃣ Run backend server**                | `python manage.py runserver 8000`                                                                                                         |
@@ -59,7 +60,7 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 > You can now have both:
 > - Docker backend at `:8001`
 > - Local backend at `:8000`  
-> running simultaneously if you wish (cookies/CSRF may conflict across ports, so use separate browsers/incognito if needed).
+> running simultaneously if you wish (cookies/CSRF may conflict across ports, so use separate browsers if needed).
 
 ---
 

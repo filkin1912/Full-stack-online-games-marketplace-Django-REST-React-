@@ -7,6 +7,8 @@ from django.views.decorators.http import require_POST
 from datetime import datetime
 import random
 from decimal import Decimal
+from django.core.management import call_command
+from django.http import HttpResponse
 
 from exam_project.common.models import BoughtGame, GameComment
 from exam_project.common.forms import GameCommentForm
@@ -70,11 +72,11 @@ class BoughtGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListVi
         total_spent = sum(bg.game.price for bg in qs)
 
         context.update({
-            'search_query': self.request.GET.get('q', ''),   # ✅ added
-            'per_page': self.get_paginate_by(qs),            # ✅ added
-            'per_page_options': self.PER_PAGE_OPTIONS,       # ✅ added
-            'sort': self.request.GET.get('sort', 'newest'),  # ✅ added
-            'show_controls': True,                           # ✅ added
+            'search_query': self.request.GET.get('q', ''),
+            'per_page': self.get_paginate_by(qs),
+            'per_page_options': self.PER_PAGE_OPTIONS,
+            'sort': self.request.GET.get('sort', 'newest'),
+            'show_controls': True,
             'hide_buttons': True,
             'total_spent': total_spent,
         })
@@ -252,3 +254,15 @@ def seed_games(request):
     ])
 
     return render(request, 'game/seed_games.html')
+
+
+@login_required
+def load_games(request):
+    if GameModel.objects.exists():
+        return HttpResponse("Games already exists. Skipping.")
+
+    try:
+        call_command("loaddata", "initial_games.json")
+        return render(request, 'game/seed_games.html')
+    except Exception as e:
+        return HttpResponse(f"Error loading games: {e}")

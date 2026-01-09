@@ -41,7 +41,7 @@ class GameModel(models.Model):
         null=False, blank=False,)
     game_picture = models.ImageField(upload_to="game_pics/", blank=True, null=True, default="profile_pics/no-image.jpg")
     summary = models.TextField(null=True, blank=True, )
-    user = models.ForeignKey(UserModel, default=None, on_delete=models.CASCADE, )
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

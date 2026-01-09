@@ -6,6 +6,7 @@ from exam_project.games.api_views import (
     GameBuyApiView,
     BoughtGamesListApiView,
     SeedGamesApiView,
+    LoadGamesApiView
 )
 
 urlpatterns = [
@@ -15,5 +16,5 @@ urlpatterns = [
     path('<int:pk>/buy/', GameBuyApiView.as_view(), name='games_buy'),
     path('bought-games/', BoughtGamesListApiView.as_view(), name='bought_games_list'),
     path('seed/', SeedGamesApiView.as_view(), name='games_seed'),
-
+    path("load/", LoadGamesApiView.as_view(), name="load_games"),
 ]

@@ -1,15 +1,13 @@
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useAuthContext} from "../../../context/AuthContext";
-import {useGameContext} from "../../../context/GameContext";
-import {useState} from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../context/AuthContext";
+import { useGameContext } from "../../../context/GameContext";
+import { useBoughtGamesContext } from "../../../context/BoughtGamesContext";
+import { useState } from "react";
 
 export const Header = () => {
-    const {isAuthenticated, onLogout, token} = useAuthContext();
-    const {
-        handleSearch,
-        refreshGames,
-        resetPagination,
-    } = useGameContext();
+    const { isAuthenticated, onLogout, token, refreshUser } = useAuthContext();
+    const { handleSearch, refreshGames, resetPagination } = useGameContext();
+    const { fetchBoughtGames } = useBoughtGamesContext();
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -28,6 +26,13 @@ export const Header = () => {
         resetPagination();
     };
 
+    const reloadAllGames = async () => {
+        resetSearch();
+        await refreshGames();
+        await refreshUser();
+        navigate("/");
+    };
+
     const seedGames = async () => {
         try {
             const res = await fetch(`${process.env.REACT_APP_API_URL}/api/games/seed/`, {
@@ -38,14 +43,11 @@ export const Header = () => {
                 },
             });
 
-            if (!res.ok) {
-                throw new Error("Failed to seed games");
-            }
+            if (!res.ok) throw new Error("Failed to seed games");
 
             alert("20 games created successfully!");
             await refreshGames();
-            handleSearch("");
-            resetPagination();
+            resetSearch();
             navigate("/");
         } catch (err) {
             console.error("SEED ERROR:", err);
@@ -53,12 +55,35 @@ export const Header = () => {
         }
     };
 
+    const loadGames = async () => {
+        try {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/games/load/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) throw new Error("Failed to load games");
+
+            await res.json();
+            alert("20 games loaded successfully!");
+
+            await refreshGames();
+            resetSearch();
+            navigate("/");
+        } catch (err) {
+            console.error("LOAD ERROR:", err);
+            alert("Error loading games");
+        }
+    };
 
     return (
         <header>
             <div className="header-left">
                 <h1>
-                    <Link className="home" to="/" onClick={resetSearch}>
+                    <Link className="home" to="/" onClick={reloadAllGames}>
                         All Games
                     </Link>
                 </h1>
@@ -92,24 +117,40 @@ export const Header = () => {
             <nav>
                 {isAuthenticated ? (
                     <>
-                        <Link
-                            to="#"
-                            onClick={seedGames}
-                            className="nav-btn"
-                        >
-                            SEED Games
+                        <Link to="#" onClick={loadGames} className="nav-btn">
+                            Load games
                         </Link>
 
-                        <Link
-                            to="#"
-                            onClick={onLogout}
-                            className="nav-btn"
-                        >
+                        <Link to="#" onClick={seedGames} className="nav-btn">
+                            Seed games
+                        </Link>
+
+                        <Link to="#" onClick={onLogout} className="nav-btn">
                             LogOut
                         </Link>
 
-                        <Link to="/bought-games" className="nav-btn">Bought games</Link>
-                        <Link to="/my-games" className="nav-btn">My games</Link>
+                        <Link
+                            to="/bought-games"
+                            className="nav-btn"
+                            onClick={async () => {
+                                await fetchBoughtGames();
+                                await refreshUser();
+                            }}
+                        >
+                            Bought games
+                        </Link>
+
+                        <Link
+                            to="/my-games"
+                            className="nav-btn"
+                            onClick={async () => {
+                                await refreshGames();
+                                await refreshUser();
+                            }}
+                        >
+                            My games
+                        </Link>
+
                         <Link to="/create" className="nav-btn">Create Game</Link>
                         <Link to="/user-details" className="nav-btn">Profile</Link>
                     </>

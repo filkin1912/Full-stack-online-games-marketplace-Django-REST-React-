@@ -100,6 +100,7 @@
 .buttons {
     margin-top: 16px;
     display: flex;
+    align-items: end;
     gap: 5px;
     justify-content: center;
     flex-wrap: wrap;
@@ -109,6 +110,7 @@
    Go Back Button
    =========================== */
 .go-back-btn {
+    max-height: 35px;
     position: relative;
     display: inline-flex;
     align-items: center;

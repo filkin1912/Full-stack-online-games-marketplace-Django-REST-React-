@@ -1,11 +1,11 @@
-import { useContext, useMemo } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import { useGameContext } from "../../context/GameContext";
-import { GameCard } from "./Game/Game";
-import { CatalogLayout } from "../Shared/CatalogLayout";
+import {useContext, useMemo} from "react";
+import {AuthContext} from "../../context/AuthContext";
+import {useGameContext} from "../../context/GameContext";
+import {GameCard} from "./Game/Game";
+import {CatalogLayout} from "../Shared/CatalogLayout";
 
 export const MyGames = () => {
-    const { userId, isAuthenticated } = useContext(AuthContext);
+    const {userId, isAuthenticated} = useContext(AuthContext);
     const {
         games,
         filteredGames,
@@ -46,26 +46,38 @@ export const MyGames = () => {
     return (
         <CatalogLayout totalItems={sortedOwned.length}>
             <div className="general-app-container">
-                <p className="no-articles no-articles--welcome">
-                    {isAuthenticated ? "MY GAMES" : "Please login to view your games"}
-                </p>
 
-                {noGames && <p className="no-articles">NO UPLOADED GAMES YET</p>}
-                {noMatch && <p className="no-articles">NO GAME</p>}
-                {noOwned && !noMatch && !noGames && (
-                    <p className="no-articles">NO OWNED GAMES</p>
+                {/* MAIN TITLE LOGIC */}
+                {!isAuthenticated ? (
+                    <p className="no-articles no-articles--welcome">
+                        Please login to view your games
+                    </p>
+                ) : noOwned ? (
+                    <p className="no-articles no-articles--welcome">
+                        NO OWNED GAMES
+                    </p>
+                ) : (
+                    <p className="no-articles no-articles--welcome">
+                        MY GAMES
+                    </p>
                 )}
 
+                {/* GAME GRID */}
                 {!noOwned && !noMatch && !noGames && (
                     <div className="game-grid-wrapper">
                         <section id="welcome-world" className="game-grid">
                             {paginatedOwned.map((game) => (
-                                <GameCard key={game.id || game._id} game={game} />
+                                <GameCard
+                                    key={game.id || game._id}
+                                    game={game}
+                                    hideBuyButton={true}
+                                />
                             ))}
                         </section>
                     </div>
                 )}
             </div>
         </CatalogLayout>
+
     );
 };

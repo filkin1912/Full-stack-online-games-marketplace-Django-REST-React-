@@ -97,6 +97,7 @@ textarea.form-control {
    Buttons
 ================================ */
 .btn {
+    max-height: 35px;
     display: inline-block;
     padding: 0.64em 1.12em;
     border-radius: var(--radius-md);

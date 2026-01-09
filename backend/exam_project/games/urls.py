@@ -1,10 +1,12 @@
 from django.urls import path, include
 from exam_project.games.views import game_add, game_details, game_edit, game_delete, \
-    game_buy, IndexView, BoughtGamesView, seed_games, MyGamesView
+    game_buy, IndexView, BoughtGamesView, seed_games, MyGamesView, load_games
 
 urlpatterns = (
     path('', IndexView.as_view(), name='index'),
     path('seed_games', seed_games, name='seed games'),
+    path("load_games/", load_games, name="load games"),
+
     path('dashboard/', BoughtGamesView.as_view(), name='bought games'),
     path('my-games/<int:pk>/', MyGamesView.as_view(), name='my games'),
     path('game/', include([
