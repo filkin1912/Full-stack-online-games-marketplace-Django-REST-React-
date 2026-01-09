@@ -29,18 +29,18 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 
 ## 🚀 Option 1: Run the entire stack with Docker
 
-| Step | Description                                                                                                                                                        |
-|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Step | Description                                                                                                                                                      |
+|------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **1️⃣ Clone the repository** | `git clone git@github.com:filkin1912/Full-stack-online-games-marketplace-Django-REST-React-.git`<br>`cd .\Full-stack-online-games-marketplace-Django-REST-React-\` |
-| **2️⃣ Start Docker environment** | `docker compose up -d`                                                                                                                                             |
-| **3️⃣ Create Django superuser (Docker)** | `cd .\backend\ `<br>`docker exec -it gamesplay-backend-1 python manage.py createsuperuser`                                                                         |
-| **4️⃣ Access the application** | Frontend: `http://localhost:3001`<br>Backend: `http://localhost:8001`<br>Admin: `http://localhost:8001/admin`                                                      |
-| **5️⃣ API endpoints** | Games: `/api/games/`<br>Accounts: `/api/accounts/`<br>Common: `/api/common/`<br>JWT: `/api/auth/token/`, `/refresh/`, `/verify/`                                   |
+| **2️⃣ Start Docker environment** | `docker compose up -d`                                                                                                                                           |
+| **3️⃣ Create Django superuser (Docker)** | `cd .\backend\ `<br>`docker exec -it gamesplay-backend python manage.py createsuperuser`                                                                         |
+| **4️⃣ Access the application** | Frontend: `http://localhost:3001`<br>Backend: `http://localhost:8001`<br>Admin: `http://localhost:8001/admin`                                                    |
+| **5️⃣ API endpoints** | Games: `/api/games/`<br>Accounts: `/api/accounts/`<br>Common: `/api/common/`<br>JWT: `/api/auth/token/`, `/refresh/`, `/verify/`                                 |
 
 ---
 
 ## 🧑‍💻 Option 2: Run the project locally 
-**(to use PostgreSQL database running in Docker 1st is needed 'docker compose up -d' to be executed and then from Docker Desktop container stop - `gamesplay-backend-1` and `gamesplay-frontend-1`, only `project_dbcontainer` should be running)**
+**(to use PostgreSQL database running in Docker 1st is needed 'docker compose up -d', docker container to be started and then from Docker Desktop application to stop - 1.`gamesplay-backend-1` and 2.`gamesplay-frontend-1`, only `project_dbcontainer` should be running)**
 
 ## 🐍 START Backend – Local Setup (Django on :8000)
 
@@ -49,7 +49,7 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 |-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | **Go to the frontend folder**             | `...\Full-stack-online-games-marketplace-Django-REST-React-\backend`                                                                      |
 | **1️⃣ Create & activate virtual environment** | `python -m venv venv`<br>`source venv/bin/activate` (Linux/macOS)<br>`venv\Scripts\Activate.ps1` or `venv\Scripts\activate.bat` (Windows) |
-| ~~**2️⃣ Install dependencies**~~              | ~~`pip install -r requirements.txt`~~                                                                                                         |
+| **2️⃣ Install dependencies**              | `pip install -r requirements.txt`                                                                                                         |
 | **3️⃣ Apply database migrations**         | `python manage.py migrate`                                                                                                                |
 | **4️⃣ Create admin user**                 | `python manage.py createsuperuser`                                                                                                        |
 | **5️⃣ Run backend server**                | `python manage.py runserver 8000`                                                                                                         |
@@ -60,24 +60,21 @@ Full-stack-online-games-marketplace-Django-REST-React-/
 > You can now have both:
 > - Docker backend at `:8001`
 > - Local backend at `:8000`  
-> running simultaneously if you wish (cookies/CSRF may conflict across ports, so use separate browsers if needed).
+> running simultaneously if you wish (cookies/CSRF may conflict across ports, so it's recommended to use separate browsers).
 
 ---
 
 ## ⚛️ START Frontend – Local Setup (React on :3000)
 
-| Step                                                                             | Description                                                                                                     |
-|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
-| **1️⃣ Go to the frontend folder**                                                | `...\Full-stack-online-games-marketplace-Django-REST-React-\frontend_app`                                       |
-| **2️⃣ Install frontend dependencies**                                            | `npm install`                                                                                                   |
-| **<span style="color: orange; font-weight: bold;">Ignore these warnings</span>** | **<span style="color: red; font-weight: bold;">Don't execute:</span>**`npm audit fix` , `npm audit fix --force` |
-| **3️⃣ Start the local frontend**                                                 | `npm start`                                                                                                     |
+| Step                                                                             | Description                                                                                                             |
+|----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| **1️⃣ Go to the frontend folder**                                                | `...\Full-stack-online-games-marketplace-Django-REST-React-\frontend_app`                                               |
+| **2️⃣ Install frontend dependencies**                                            | `npm install`                                                                                                           |
+| **<span style="color: orange; font-weight: bold;">Ignore these warnings</span>** | **<span style="color: red; font-weight: bold;">Don't execute:</span>**~~`npm audit fix`~~ , ~~`npm audit fix --force`~~ |
+| **3️⃣ Start the local frontend**                                                 | `npm start`                                                                                                             |
 
 This will launch the React dev server at:
 - **Local frontend:** `http://localhost:3000` (development, hot reload)
-
-You also have:
-- **Docker frontend:** `http://localhost:3001` (production build)
 
 ---
 
@@ -96,13 +93,15 @@ You also have:
 
 ## 🔄 Core Functionalities (Quick Overview)
 
-| <span style="color: orange; font-weight: bold;">Backend</span> (Django + DRF)                                               | <span style="color: orange; font-weight: bold;">Frontend</span> (React)                                                                      |
-|-----------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-| <span style="color: orange; font-weight: bold;">User Management:</span> Register, login, logout, profile editing, avatars   | <span style="color: orange; font-weight: bold;">Public Storefront:</span> Browse games, search, view details, pagination                     |
-| <span style="color: orange; font-weight: bold;">Wallet System:</span> Add funds, spend on purchases, seller credits         | <span style="color: orange; font-weight: bold;">Private User Area:</span> Login/register, manage profile, wallet, owned games                |
-| <span style="color: orange; font-weight: bold;">Game Catalog:</span> Add, edit, delete games, search & filter, sort options | <span style="color: orange; font-weight: bold;">Game Management:</span> Create, edit, delete games (authorized users only)                   |
-| <span style="color: orange; font-weight: bold;">Owner Tracking:</span> Prevent duplicate purchases, unique user–game        | <span style="color: orange; font-weight: bold;">State & Routing:</span> Context API, protected routes (RouteGuard), LocalStorage persistence |
-| <span style="color: orange; font-weight: bold;">RES API:</span> JWT-secured endpoints (games, accounts, common), SimpleJWT  | —                                                                                                                                            |
+| <span style="color: orange; font-weight: bold;">Backend</span> (Django + DRF)                                                             | <span style="color: orange; font-weight: bold;">Frontend</span> (React)                                                                         |
+|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| <span style="color: orange; font-weight: bold;">User Management:</span> Register, login, logout, profile editing, avatars                 | <span style="color: orange; font-weight: bold;">Public Storefront:</span> Browse games, search, view details, pagination                        |
+| <span style="color: orange; font-weight: bold;">Wallet System:</span> Add funds, spend on purchases, total spent                          | <span style="color: orange; font-weight: bold;">Private User Area:</span> Login/register, manage profile, wallet, owned games                   |
+| <span style="color: orange; font-weight: bold;">Game Catalog:</span> CRUD games, search & filter, sort // add/remove comments with avatar | <span style="color: orange; font-weight: bold;">Game Management:</span> Create, edit, delete, comment games (authorized users only)             |
+| <span style="color: orange; font-weight: bold;">Owner Tracking:</span> Prevent duplicate purchases, unique user–game                      | <span style="color: orange; font-weight: bold;">State & Routing:</span> Context API, protected routes (RouteGuard), LocalStorage persistence    |
+| <span style="color: orange; font-weight: bold;">REST API:</span> JWT-secured endpoints (games, accounts, common), SimpleJWT               | —                                                                                                                                               |
+| <span style="color: orange; font-weight: bold;">Access Limitation:</span> Login required for protected URLs (edit, delete, buy, profile)  | <span style="color: orange; font-weight: bold;">Route Protection:</span> Guarded pages require authentication (My Games, Bought Games, Profile) |
+                                                                                                                                              |
 
 ---
 
@@ -111,9 +110,9 @@ You also have:
 This project demonstrates a **full-stack architecture** with:
 
 - <span style="color: orange; font-weight: bold;">**Dockerized deployment**:</span> Start the entire stack with one command.
-- <span style="color: orange; font-weight: bold;">**Local dev flexibility**:</span> Run backend and frontend locally for easier debugging and code review.
-- <span style="color: orange; font-weight: bold;">**React + Django REST**</span> integration: Clear separation of concerns, clean API, and SPA UI.
-- <span style="color: orange; font-weight: bold;">**Game marketplace domain**</span>: Browsing, buying, selling, wallet handling, ownership tracking, and secure routes.
+- <span style="color: orange; font-weight: bold;">**Local dev flexibility**:</span> Run the backend and frontend locally so you can review or edit the code and see the changes applied immediately.
+- <span style="color: orange; font-weight: bold;">**React + Django REST**</span> integration: Clear separation of concerns, and a smooth single‑page application experience(SPA).
+- <span style="color: orange; font-weight: bold;">**Game marketplace domain**</span>: Browsing, buying, selling, wallet handling, ownership tracking, leaving reviews and secure routes.
 
 ---
 
@@ -127,12 +126,13 @@ The Django backend provides a complete marketplace system with:
   - “All Games” page accessible to all visitors
   - Game browsing with detailed views
   - Search by title
-  - Sorting: newest, oldest, price ascending/descending
+  - Sorting: newest, oldest, price ascending/
+  - Comment games
 
 - **Private User Area (authentication required)**
   - View owned and purchased games
   - Manage profile and wallet balance
-  - Add, edit, and delete games offered for sale
+  - Add, edit, and delete owned games 
 
 - **REST API (Django REST Framework)**
   - Authenticated endpoints for listing, creating, and buying games
@@ -201,10 +201,9 @@ The Django backend provides a complete marketplace system with:
 
 ---
 
-## 🎮 Optional: Seed Initial Game Objects
+## 🎮 Preloaded Game Objects
 
-After logging in with your user profile, visit:
-
+After logging in, click “Load games” to automatically generate 20 sample games for a better user experience.
 ```
 http://localhost:8001/seed_games
 ```

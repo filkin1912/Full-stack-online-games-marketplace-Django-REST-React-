@@ -14,9 +14,9 @@ services:
       - "5433:5432"
 
   backend:
-    image: filk1912/gamesplay-backend-1:latest
+    image: filk1912/gamesplay-backend:latest
     pull_policy: always
-    container_name: gamesplay-backend-1
+    container_name: gamesplay-backend
     entrypoint: [ "/app/entrypoint.sh" ]
     ports:
       - "8001:8000"        # Host 8001 → Container 8000
@@ -36,9 +36,9 @@ services:
       - ./backend/mediafiles:/app/mediafiles   # Correct mount for media
 
   frontend:
-    image: filk1912/gamesplay-frontend-1:latest
+    image: filk1912/gamesplay-frontend:latest
     pull_policy: always
-    container_name: gamesplay-frontend-1
+    container_name: gamesplay-frontend
     ports:
       - "3001:3000"
     depends_on:
