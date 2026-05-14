@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/accounts/", include("exam_project.accounts.api_urls")),
     path("api/games/", include("exam_project.games.api_urls")),
     path("api/common/", include("exam_project.common.api_urls")),
+    path("api/chatbot/", include("exam_project.chatbot.api_urls")),
 
     # Django template routes
     path("accounts/", include("exam_project.accounts.urls")),

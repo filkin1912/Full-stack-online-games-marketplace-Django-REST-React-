@@ -272,6 +272,7 @@ footer p {
 
 .sort-form {
     justify-self: start;
+    margin-bottom: 30px;
 }
 
 .per-page-form {
@@ -320,4 +321,150 @@ footer p {
 
 .shadow-strong {
     box-shadow: var(--shadow-strong);
+}
+
+/* ==========================================
+   RESPONSIVE — HAMBURGER MENU + MOBILE LAYOUT
+   ========================================== */
+
+/* Hamburger button */
+.hamburger-btn {
+    display: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-light);
+    background: none;
+    border: none;
+    padding: 4px 10px;
+}
+
+/* Mobile nav container */
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(42, 73, 128, 0.95);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    margin-top: 10px;
+}
+
+.mobile-nav a {
+    padding: 10px 14px;
+    background: var(--color-primary);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-weight: bold;
+    color: var(--color-light);
+}
+
+.mobile-nav.open {
+    display: flex;
+}
+
+/* ==========================================
+   BREAKPOINT: TABLETS (max-width: 768px)
+   ========================================== */
+@media (max-width: 768px) {
+
+    nav {
+        display: none;
+    }
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    header {
+        padding: 0 12px;
+        height: auto;
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+
+    .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin-top: 6px;
+        justify-content: center;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    /* Controls row becomes flex: Sort | PerPage on top, heading below */
+    .controls-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        margin-top: 10px;
+        gap: 12px;
+    }
+
+    .sort-form {
+        order: 1;
+    }
+
+    .per-page-form {
+        order: 2;
+    }
+
+    .controls-heading {
+        order: 3;
+        width: 100%;
+        text-align: center;
+        margin-top: 6px;
+        font-size: 1.8rem;
+    }
+
+    footer {
+        position: relative;
+        height: auto;
+        padding: 10px;
+        font-size: 1rem;
+    }
+}
+
+/* ==========================================
+   BREAKPOINT: MOBILE (max-width: 480px)
+   ========================================== */
+@media (max-width: 480px) {
+
+    html {
+        font-size: 11px;
+    }
+
+    header h1 a.home {
+        font-size: 1.2rem;
+        padding: 4px 10px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .search-input,
+    .search-btn {
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    .profile-balance-box {
+        font-size: 0.9rem;
+        padding: 4px 8px;
+    }
+
+    footer {
+        font-size: 0.9rem;
+    }
 }

@@ -5,7 +5,7 @@
         {% if game.game_picture %}
             <img src="{{ game.game_picture.url }}" alt="{{ game.title }}">
         {% else %}
-            <img src="/media/game_pics/no-image.jpg" alt="{{ game.title }}">
+            <img src="{% static 'images/no-image.jpg' %}" alt="{{ game.title }}">
         {% endif %}
 
     </div>

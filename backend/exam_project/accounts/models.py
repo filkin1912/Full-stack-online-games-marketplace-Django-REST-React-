@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 
 class AppUserManager(BaseUserManager):
@@ -24,7 +25,8 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     money = models.PositiveIntegerField(default=0)
-    profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
+    profile_picture = CloudinaryField("image", blank=True, null=True)
+
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -41,6 +43,4 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     @property
     def display_name(self):
         full_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
-        if not full_name or full_name.lower() == "none none":
-            return self.email
-        return full_name
+        return full_name if full_name and full_name.lower() != "none none" else self.email

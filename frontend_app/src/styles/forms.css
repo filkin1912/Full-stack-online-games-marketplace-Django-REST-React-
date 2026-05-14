@@ -133,3 +133,64 @@ textarea.form-control {
 .btn--upload:hover {
     background: var(--color-primary-hover);
 }
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1024px) {
+    #general-app-container {
+        width: 40vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-page {
+        max-width: 420px;
+        margin: 1.2em auto;
+        padding: 10px;
+    }
+
+    #general-app-container {
+        width: 80vw;
+        min-height: auto;
+        margin: 1.5rem auto;
+        padding: 12px;
+    }
+
+    .btn--submit {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-page {
+        max-width: 100%;
+        margin: 1em auto;
+        border-radius: var(--radius-md);
+    }
+
+    #general-app-container {
+        width: 94vw;
+        margin: 1rem auto 4rem auto;
+        padding: 12px;
+    }
+
+    label {
+        font-size: var(--font-xs);
+    }
+
+    .form-control {
+        font-size: var(--font-sm);
+        padding: 8px 10px;
+    }
+
+    textarea.form-control {
+        min-height: 110px;
+    }
+
+    .btn {
+        width: 100%;
+        max-height: none;
+    }
+}

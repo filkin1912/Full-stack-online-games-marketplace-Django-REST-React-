@@ -146,13 +146,11 @@ header nav a:hover {
    Show per page
    =========================== */
 .per-page-form {
-    position: fixed;
-    top: 45px;
-    right: 15px;
     margin: 12px 0;
     gap: 10px;
     font-weight: bold;
     color: white;
+    position: static;
 }
 
 .per-page-form select {
@@ -162,4 +160,37 @@ header nav a:hover {
     background-color: var(--color-light);
     color: black;
     border: var(--border-light);
+}
+
+/* ===========================
+   Responsive tweaks for grid
+   =========================== */
+@media (max-width: 1024px) {
+    .game-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .game-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .fixed-paginator {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fixed-paginator {
+        bottom: 4px;
+        padding: 4px 8px;
+        font-size: var(--font-sm);
+    }
 }

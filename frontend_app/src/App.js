@@ -9,6 +9,8 @@ import {BoughtGamesProvider} from "./context/BoughtGamesContext";
 
 import {Header} from "./components/Basic/Header/Header";
 import {Footer} from "./components/Basic/Footer/Footer";
+import { Chatbot } from "./components/Chatbot/Chatbot";
+
 
 import {Home} from "./components/Home/Home";
 import {Register} from "./components/Register/Register";
@@ -94,6 +96,7 @@ function App() {
                             />
                         </Routes>
 
+                        <Chatbot/>
                         <Footer/>
                     </div>
                 </GameProvider>

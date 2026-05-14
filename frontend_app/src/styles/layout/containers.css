@@ -21,3 +21,45 @@
     max-width: 1200px;
     margin: 0 auto;
 }
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1024px) {
+    .general-app-container {
+        padding: var(--space-xl);
+    }
+
+    .game-grid {
+        gap: var(--space-2xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .general-app-container {
+        padding: var(--space-lg);
+    }
+
+    .game-grid-wrapper {
+        min-height: auto;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        padding: var(--space-xl);
+        gap: var(--space-xl);
+    }
+}
+
+@media (max-width: 480px) {
+    .general-app-container {
+        padding: var(--space-md);
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+        padding: var(--space-lg);
+        gap: var(--space-lg);
+    }
+}

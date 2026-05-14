@@ -32,14 +32,23 @@ export const userServiceFactory = (token) => {
     // =====================================================
     // Update user (PATCH with FormData)
     // =====================================================
+    // const updateFormData = async (userId, formData) => {
+    //     try {
+    //         return await request.patchFormData(`${baseUrl}/users/${userId}/`, formData);
+    //     } catch (err) {
+    //         console.error(`❌ Cannot update user ${userId}:`, err);
+    //         return null;
+    //     }
+    // };
     const updateFormData = async (userId, formData) => {
         try {
-            return await request.patchFormData(`${baseUrl}/users/${userId}/`, formData);
+            return await request.patchFormData(`${baseUrl}/me/`, formData);
         } catch (err) {
             console.error(`❌ Cannot update user ${userId}:`, err);
             return null;
         }
     };
+
 
     // =====================================================
     // Delete user account

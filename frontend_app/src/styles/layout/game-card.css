@@ -47,7 +47,6 @@
     display: block;
 }
 
-
 /* Game title */
 .game h3 {
     font-family: "Agency FB", serif;
@@ -83,4 +82,46 @@
 .btn--details:hover {
     background: #5718e9;
     transform: translateY(-3px);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+    .game {
+        max-width: 100%;
+        max-height: none;
+    }
+
+    .image-wrap {
+        height: 130px;
+    }
+
+    .game h3 {
+        font-size: 1.1rem;
+    }
+
+    .btn--details {
+        font-size: var(--font-sm);
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game {
+        padding: 4px;
+    }
+
+    .image-wrap {
+        height: 120px;
+    }
+
+    .game h3 {
+        font-size: 1rem;
+    }
+
+    .data-buttons {
+        gap: 4px;
+    }
 }

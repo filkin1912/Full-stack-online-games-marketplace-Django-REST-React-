@@ -19,3 +19,6 @@
 @import "pages/bought-games.css";
 @import "pages/game-editor.css";
 @import "profile-details.css";
+
+/* 6. Chatbot */
+@import "chatbot/chatbot.css";

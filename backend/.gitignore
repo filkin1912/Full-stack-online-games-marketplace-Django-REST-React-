@@ -9,7 +9,7 @@ __pycache__/
 
 # Virtual environments
 venv/
-.env/
+.env.local/
 *.venv/
 
 # Django-specific
@@ -27,4 +27,8 @@ local_settings.py
 # OS-specific
 Thumbs.db
 # created by virtualenv automatically
+
+# Environment secrets (never commit — GitHub push protection blocks real keys)
+.env.local
+.env.production
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useForm = (initialValues, onSubmitHandler) => {
     const [values, setValues] = useState(initialValues);
@@ -12,20 +12,23 @@ export const useForm = (initialValues, onSubmitHandler) => {
     const onSubmit = async (e) => {
         e.preventDefault();
 
-        setErrors({}); // ✅ Clear previous errors
+        // Clear old errors before new submit
+        setErrors({});
 
         try {
             const result = await onSubmitHandler(values);
 
-            // ✅ Ensure result is an object
-            if (result && typeof result === "object" && !Array.isArray(result)) {
+            // ⭐ If backend or AuthContext returns errors → show them
+            if (result && typeof result === "object") {
                 setErrors(result);
-            } else {
-                setErrors({});
             }
         } catch (err) {
-            console.error("useForm: submit handler threw an error", err);
-            setErrors({ general: "Something went wrong. Please try again." });
+            console.error("useForm error:", err);
+
+            // Fallback general error
+            setErrors({
+                general: "Something went wrong. Please try again.",
+            });
         }
     };
 

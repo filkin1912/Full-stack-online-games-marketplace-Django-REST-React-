@@ -36,8 +36,14 @@ export const BoughtGamesProvider = ({ children }) => {
         try {
             const result = await boughtGamesService.getAll();
 
-            const extractedGames = (result?.results || [])
-                .map((record) => record.game || record)
+            const rawList = Array.isArray(result)
+                ? result
+                : Array.isArray(result?.results)
+                    ? result.results
+                    : [];
+
+            const extractedGames = rawList
+                .map((record) => record?.game || record)
                 .filter(Boolean);
 
             setBoughtGames(extractedGames);

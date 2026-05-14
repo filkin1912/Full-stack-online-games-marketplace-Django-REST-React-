@@ -77,3 +77,20 @@
         visibility: hidden;
     }
 }
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 480px) {
+    .custom-message {
+        width: 90vw;
+        max-width: 360px;
+        padding: 10px 40px 10px 14px;
+        font-size: 1rem;
+    }
+
+    .message-overlay {
+        top: 40%;
+    }
+}

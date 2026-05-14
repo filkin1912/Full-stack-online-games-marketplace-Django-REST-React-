@@ -1,48 +1,74 @@
-from decimal import Decimal
-from enum import Enum
-
-from django.contrib.auth import get_user_model
-from django.core import validators
 from django.db import models
+from django.contrib.auth import get_user_model
+from cloudinary.models import CloudinaryField
 
 UserModel = get_user_model()
 
 
-class Choices(Enum):
-    @classmethod
-    def choices(cls):
-        return [(x.name, x.value) for x in cls]
-
-    @classmethod
-    def max_len(cls):
-        return max(len(name) for name, _ in cls.choices())
-
-
-class Category(Choices):
-    ACTION = "Action"
-    ADVENTURE = "Adventure"
-    PUZZLE = "Puzzle"
-    STRATEGY = "Strategy"
-    SPORTS = "Sports"
-    BOARD = "Board/Card Game"
-    OTHER = "Other"
-
-
 class GameModel(models.Model):
-    title = models.CharField(max_length=24, unique=True, null=False, blank=False, )
-    category = models.CharField(max_length=Category.max_len(), choices=Category.choices(), )
+    CATEGORY_CHOICES = [
+        ("ACTION", "Action"),
+        ("ADVENTURE", "Adventure"),
+        ("PUZZLE", "Puzzle"),
+        ("STRATEGY", "Strategy"),
+        ("SPORTS", "Sports"),
+        ("BOARD", "Board"),
+        ("OTHER", "Other"),
+    ]
+
+    title = models.CharField(
+        max_length=50,
+        unique=True,
+        db_index=True,
+    )
+
+    summary = models.TextField(
+        blank=True,
+        null=True,
+    )
+
     price = models.DecimalField(
-        max_digits=5,  # total digits (3 before + 2 after decimal)
-        decimal_places=2,  # allow two digits after decimal
-        validators=[
-            validators.MinValueValidator(Decimal('10.00')),  # minimum price
-            validators.MaxValueValidator(Decimal('999.99')),  # maximum price
-        ],
-        null=False, blank=False,)
-    game_picture = models.ImageField(upload_to="game_pics/", blank=True, null=True, default="profile_pics/no-image.jpg")
-    summary = models.TextField(null=True, blank=True, )
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
+
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default="OTHER",
+        db_index=True,
+    )
+
+    game_picture = CloudinaryField(
+        "game_image",
+        blank=True,
+        null=True,
+    )
+
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name="games",
+        null=True,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        db_index=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Game"
+        verbose_name_plural = "Games"
 
     def __str__(self):
-        return f'{self.title}  --  {self.category}'
+        return f"{self.title} ({self.category})"

@@ -47,3 +47,38 @@
     background-color: var(--color-accent);
     transform: translateY(40%);
 }
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+    .bought-header-row {
+        padding: 0 10px;
+    }
+
+    .bought-header-row .total-spent-box {
+        font-size: 1.2rem;
+        left: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bought-header-row {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+
+    .bought-header-row .total-spent-box {
+        position: static;
+        transform: none;
+        margin-bottom: 6px;
+        text-align: center;
+    }
+
+    .total-spent-box {
+        transform: none;
+        margin-top: 0;
+    }
+}

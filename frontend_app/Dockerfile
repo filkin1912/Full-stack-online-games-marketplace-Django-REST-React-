@@ -8,11 +8,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy source code including .env
+# Copy source code including .env.local
 COPY . .
 
-# Ensure .env is available during build
-COPY .env .env
+# Ensure .env.local is available during build
+#COPY .env .env
 
 # Build the React app
 RUN npm run build

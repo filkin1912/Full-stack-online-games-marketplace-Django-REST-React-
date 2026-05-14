@@ -5,5 +5,9 @@ register = Library()
 
 @register.filter()
 def placeholder(field, text):
-    field.field.widget.attrs['placeholder'] = text
+    # If it's not a form field, just return it unchanged
+    if not hasattr(field, "field"):
+        return field
+
+    field.field.widget.attrs["placeholder"] = text
     return field

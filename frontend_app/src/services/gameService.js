@@ -1,7 +1,9 @@
 import {requestFactory} from "./requester";
 import {boughtGamesServiceFactory} from "./boughtGameService";
 
-const baseUrl = `${process.env.REACT_APP_API_URL}/api/games/`;
+const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:8001/fast").replace(/\/$/, "");
+const baseUrl = `${API_URL}/api/games/`;
+
 
 export const gameServiceFactory = (token) => {
     const request = requestFactory(token);
@@ -16,12 +18,17 @@ export const gameServiceFactory = (token) => {
         while (hasNext) {
             const url = `${baseUrl}?page=${page}`;
 
+            const headers = {
+                "Content-Type": "application/json",
+            };
+
+            if (token) {
+                headers.Authorization = `Bearer ${token}`;
+            }
+
             const response = await fetch(url, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                headers,
                 signal,
             });
 
@@ -38,16 +45,13 @@ export const gameServiceFactory = (token) => {
 
             allGames = allGames.concat(results);
 
-            // DRF-style pagination: has `next` when more pages exist
-            if (data.next) {
-                page += 1;
-            } else {
-                hasNext = false;
-            }
+            hasNext = Boolean(data.next);
+            if (hasNext) page += 1;
         }
 
         return allGames;
     };
+
 
     const getOne = async (gameId) => request.get(`${baseUrl}${gameId}/`);
 

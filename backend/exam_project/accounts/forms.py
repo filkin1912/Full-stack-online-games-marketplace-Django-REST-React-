@@ -1,30 +1,51 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
 
 
 class ProfileCreateForm(UserCreationForm):
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Password",
+            "class": "form-control",
+        })
+    )
+
+    password2 = forms.CharField(
+        label="Repeat password",
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Repeat password",
+            "class": "form-control",
+        })
+    )
+
     class Meta:
         model = UserModel
         fields = ("email", "password1", "password2")
         widgets = {
-            "email": forms.EmailInput(attrs={"placeholder": "Email", "class": "form-control"}),
-            "password1": forms.PasswordInput(attrs={"placeholder": "Password", "class": "form-control"}),
-            "password2": forms.PasswordInput(attrs={"placeholder": "Repeat password", "class": "form-control"}),
+            "email": forms.EmailInput(attrs={
+                "placeholder": "Email",
+                "class": "form-control",
+            }),
         }
 
 
 class ProfileEditForm(forms.ModelForm):
-    profile_picture = forms.ImageField(
+    profile_picture = forms.FileField(
         required=False,
         label="Profile picture",
         widget=forms.FileInput(attrs={
             "class": "custom-file-input",
-            "accept": "image/*"
-        })
+            "accept": "image/*",
+        }),
     )
+
+    class Meta:
+        model = UserModel
+        fields = ("first_name", "last_name", "email", "money", "profile_picture")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,7 +53,3 @@ class ProfileEditForm(forms.ModelForm):
         self.fields["last_name"].widget.attrs["placeholder"] = "Enter your last name"
         self.fields["email"].widget.attrs["placeholder"] = "Enter your email"
         self.fields["money"].widget.attrs["placeholder"] = "Enter amount"
-
-    class Meta:
-        model = UserModel
-        fields = ("first_name", "last_name", "email", "money", "profile_picture")

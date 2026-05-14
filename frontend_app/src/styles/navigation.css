@@ -11,7 +11,7 @@
     font-size: var(--font-md);
 }
 
-/* Navigation buttons (reinforce) */
+/* Navigation buttons */
 .nav-btn,
 header nav a {
     display: inline-block;
@@ -23,10 +23,7 @@ header nav a {
     border-radius: var(--radius-md);
     font-weight: bold;
     font-size: 14px;
-    transition:
-        background var(--transition-medium),
-        transform var(--transition-fast),
-        opacity var(--transition-medium);
+    transition: background var(--transition-medium), transform var(--transition-fast), opacity var(--transition-medium);
     opacity: 0.9;
 }
 
@@ -114,7 +111,6 @@ header nav a:hover {
     transform: translateY(-1px);
 }
 
-/* Disabled */
 .fixed-paginator .page-btn.disabled {
     background-color: #ccc;
     color: #666;
@@ -123,7 +119,6 @@ header nav a:hover {
     cursor: default;
 }
 
-/* Current */
 .fixed-paginator .page-btn.current {
     background-color: red;
     color: white;
@@ -136,10 +131,13 @@ header nav a:hover {
     position: fixed;
     top: 45px;
     right: 15px;
-    margin: 12px 0;
+
+    margin-top: 38px;
     gap: 10px;
     font-weight: bold;
     color: white;
+
+    z-index: 3000;
 }
 
 .per-page-form select {
@@ -149,4 +147,113 @@ header nav a:hover {
     background-color: var(--color-light);
     color: black;
     border: var(--border-light);
+}
+
+/* Sort form — styled like per-page-form but NOT fixed */
+.sort-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 38px;
+    font-weight: bold;
+    color: white;
+
+    position: relative;
+    z-index: 3000;
+}
+
+.sort-form select {
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-md);
+    background-color: var(--color-light);
+    color: black;
+    border: var(--border-light);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1024px) {
+    .game-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-2xl);
+    }
+}
+
+@media (max-width: 768px) {
+    .general-app-container {
+        padding: var(--space-xl);
+    }
+
+    .game-grid-wrapper {
+        margin-top: 0;
+        align-items: flex-start;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        padding: var(--space-xl);
+        gap: var(--space-2xl);
+    }
+
+    .fixed-paginator {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+        max-width: 100%;
+        padding: 6px 8px;
+        font-size: var(--font-sm);
+    }
+
+    .fixed-paginator .page-range {
+        display: none;
+    }
+
+    .per-page-form {
+        top: auto;
+        bottom: 52px;
+        right: 10px;
+        font-size: var(--font-sm);
+        margin-top: 30px;
+        z-index: 3000;
+    }
+
+    .sort-form {
+        font-size: var(--font-sm);
+        margin-bottom: 38px;
+        z-index: 3000;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-grid {
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+        padding: var(--space-lg);
+        gap: var(--space-lg);
+    }
+
+    .fixed-paginator {
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .fixed-paginator .page-controls {
+        flex: 1;
+    }
+
+    .per-page-form {
+        right: 6px;
+        margin-bottom: 0px;
+        z-index: 3000;
+    }
+
+    .sort-form {
+        margin-bottom: 38px;
+        z-index: 3000;
+    }
 }

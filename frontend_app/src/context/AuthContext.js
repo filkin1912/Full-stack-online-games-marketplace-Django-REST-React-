@@ -1,12 +1,12 @@
-import { createContext, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { authServiceFactory } from "../services/authService";
-import { userServiceFactory } from "../services/userService";
+import {createContext, useContext, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+import {useLocalStorage} from "../hooks/useLocalStorage";
+import {authServiceFactory} from "../services/authService";
+import {userServiceFactory} from "../services/userService";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({children}) => {
     const navigate = useNavigate();
     const [auth, setAuth] = useLocalStorage("authKey", {});
     const authService = authServiceFactory(auth.accessToken);
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     const refreshUser = async () => {
         if (!auth.accessToken) return;
         const userDetails = await fetchUserDetails(auth.accessToken, auth.email);
-        setAuth((prev) => ({ ...prev, ...userDetails }));
+        setAuth((prev) => ({...prev, ...userDetails}));
     };
 
     // =====================================================
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
             setAuth(authData);
 
             const userDetails = await fetchUserDetails(result.access, data.email);
-            setAuth({ ...authData, ...userDetails });
+            setAuth({...authData, ...userDetails});
 
             navigate("/");
             return {};
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     // Register
     // =====================================================
     const onRegisterSubmit = async (values) => {
-        const { confirmPassword, password, email } = values;
+        const {confirmPassword, password, email} = values;
         const errors = {};
 
         if (!email?.trim()) errors.email = "Email is required";
@@ -79,8 +79,8 @@ export const AuthProvider = ({ children }) => {
         if (Object.keys(errors).length > 0) return errors;
 
         try {
-            await authService.register({ email, password });
-            const loginResult = await authService.login({ email, password });
+            await authService.register({email, password});
+            const loginResult = await authService.login({email, password});
 
             const authData = {
                 accessToken: loginResult.access,
@@ -90,19 +90,39 @@ export const AuthProvider = ({ children }) => {
             setAuth(authData);
 
             const userDetails = await fetchUserDetails(loginResult.access, email);
-            setAuth({ ...authData, ...userDetails });
+            setAuth({...authData, ...userDetails});
 
             navigate("/");
             return {};
         } catch (err) {
-            return { general: err?.message || "Registration failed" };
+            const backendErrors = err || {};
+
+            return {
+                email: backendErrors.email?.[0] || "",
+                password: backendErrors.password?.[0] || "",
+                confirmPassword: backendErrors.confirmPassword?.[0] || "",
+                general: backendErrors.non_field_errors?.[0] || backendErrors.detail || "",
+            };
         }
     };
 
     // =====================================================
     // Logout
     // =====================================================
-    const onLogout = () => {
+    const onLogout = async () => {
+        try {
+            if (auth.accessToken) {
+                await fetch(`${process.env.REACT_APP_API_URL}/api/chatbot/clear/`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${auth.accessToken}`,
+                    },
+                });
+            }
+        } catch (err) {
+            console.error("Failed to clear chatbot memory:", err);
+        }
+
         localStorage.removeItem("authKey");
         setAuth({});
         navigate("/");

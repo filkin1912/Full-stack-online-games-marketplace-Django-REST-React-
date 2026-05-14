@@ -9,6 +9,7 @@ import random
 from decimal import Decimal
 from django.core.management import call_command
 from django.http import HttpResponse
+from django.db import IntegrityError
 
 from exam_project.common.models import BoughtGame, GameComment
 from exam_project.common.forms import GameCommentForm
@@ -19,12 +20,12 @@ from exam_project.games.pagination_sort import Pagination, SortingMixin
 
 class IndexView(Pagination, SortingMixin, views.ListView):
     model = GameModel
-    template_name = 'home-page.html'
-    context_object_name = 'games'
+    template_name = "home-page.html"
+    context_object_name = "games"
 
     def get_queryset(self):
         queryset = GameModel.objects.all()
-        query = self.request.GET.get('q')
+        query = self.request.GET.get("q")
 
         if query:
             queryset = queryset.filter(title__icontains=query)
@@ -36,30 +37,30 @@ class IndexView(Pagination, SortingMixin, views.ListView):
         qs = self.get_queryset()
 
         if self.request.user.is_authenticated:
-            context['user'] = self.request.user
-            context['profile_money'] = self.request.user.money
+            context["user"] = self.request.user
+            context["profile_money"] = self.request.user.money
 
         context.update({
-            'search_query': self.request.GET.get('q', ''),
-            'per_page': self.get_paginate_by(qs),
-            'per_page_options': self.PER_PAGE_OPTIONS,
-            'sort': self.request.GET.get('sort', 'newest'),
-            'show_controls': True,  # ✅ This enables the controls in base.html
+            "search_query": self.request.GET.get("q", ""),
+            "per_page": self.get_paginate_by(qs),
+            "per_page_options": self.PER_PAGE_OPTIONS,
+            "sort": self.request.GET.get("sort", "newest"),
+            "show_controls": True,
         })
 
-        page_obj = context['page_obj']
+        page_obj = context["page_obj"]
         if page_obj.paginator.count == 0:
-            context['no_games_yet'] = True
-        elif context['search_query'] and not page_obj.object_list:
-            context['no_match'] = True
+            context["no_games_yet"] = True
+        elif context["search_query"] and not page_obj.object_list:
+            context["no_match"] = True
 
         return context
 
 
 class BoughtGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListView):
     model = BoughtGame
-    template_name = 'bought_games.html'
-    context_object_name = 'bought_games'
+    template_name = "bought_games.html"
+    context_object_name = "bought_games"
 
     def get_queryset(self):
         qs = BoughtGame.objects.filter(user=self.request.user)
@@ -72,32 +73,32 @@ class BoughtGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListVi
         total_spent = sum(bg.game.price for bg in qs)
 
         context.update({
-            'search_query': self.request.GET.get('q', ''),
-            'per_page': self.get_paginate_by(qs),
-            'per_page_options': self.PER_PAGE_OPTIONS,
-            'sort': self.request.GET.get('sort', 'newest'),
-            'show_controls': True,
-            'hide_buttons': True,
-            'total_spent': total_spent,
+            "search_query": self.request.GET.get("q", ""),
+            "per_page": self.get_paginate_by(qs),
+            "per_page_options": self.PER_PAGE_OPTIONS,
+            "sort": self.request.GET.get("sort", "newest"),
+            "show_controls": True,
+            "hide_buttons": True,
+            "total_spent": total_spent,
         })
 
-        page_obj = context['page_obj']
+        page_obj = context["page_obj"]
         if page_obj.paginator.count == 0:
-            context['no_games_yet'] = True
-        elif context['search_query'] and not page_obj.object_list:
-            context['no_match'] = True
+            context["no_games_yet"] = True
+        elif context["search_query"] and not page_obj.object_list:
+            context["no_match"] = True
 
         return context
 
 
 class MyGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListView):
     model = GameModel
-    template_name = 'my-games.html'
-    context_object_name = 'games'
+    template_name = "my-games.html"
+    context_object_name = "games"
 
     def get_queryset(self):
         qs = GameModel.objects.filter(user=self.request.user)
-        query = self.request.GET.get('q')
+        query = self.request.GET.get("q")
 
         if query:
             qs = qs.filter(title__icontains=query)
@@ -109,37 +110,44 @@ class MyGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListView):
         qs = self.get_queryset()
 
         context.update({
-            'search_query': self.request.GET.get('q', ''),
-            'per_page': self.get_paginate_by(qs),
-            'per_page_options': self.PER_PAGE_OPTIONS,
-            'sort': self.request.GET.get('sort', 'newest'),
-            'hide_button_buy': True,
-            'show_controls': True,
+            "search_query": self.request.GET.get("q", ""),
+            "per_page": self.get_paginate_by(qs),
+            "per_page_options": self.PER_PAGE_OPTIONS,
+            "sort": self.request.GET.get("sort", "newest"),
+            "hide_button_buy": True,
+            "show_controls": True,
         })
 
-        page_obj = context['page_obj']
+        page_obj = context["page_obj"]
         if page_obj.paginator.count == 0:
-            context['no_games_yet'] = True
-        elif context['search_query'] and not page_obj.object_list:
-            context['no_match'] = True
+            context["no_games_yet"] = True
+        elif context["search_query"] and not page_obj.object_list:
+            context["no_match"] = True
 
         return context
 
 
-
 @login_required
 def game_add(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         form = GameAddForm()
-    else:
-        form = GameAddForm(request.POST, request.FILES)
-        if form.is_valid():
-            game = form.save(commit=False)
-            game.user = request.user
-            game.save()
-            return redirect('index')
+        return render(request, "game/create-game.html", {"form": form})
 
-    return render(request, 'game/create-game.html', {'form': form})
+    form = GameAddForm(request.POST, request.FILES)
+
+    if not form.is_valid():
+        return render(request, "game/create-game.html", {"form": form})
+
+    game = form.save(commit=False)
+    game.user = request.user
+
+    try:
+        game.save()
+    except IntegrityError:
+        form.add_error("title", "A game with this title already exists.")
+        return render(request, "game/create-game.html", {"form": form})
+
+    return redirect("index")
 
 
 @login_required
@@ -155,18 +163,16 @@ def game_details(request, pk):
     is_owner = user == game.user
     is_bought = BoughtGame.objects.filter(user=user, game=game).exists()
 
-    # All comments already prefetched
     comments = list(game.gamecomment_set.all().order_by("created_at"))
     existing_comment = next((c for c in comments if c.user_id == user.id), None)
 
     if request.method == "POST" and not existing_comment:
         form = GameCommentForm(request.POST)
         if form.is_valid():
-            # 1:1 with CommentListCreateApiView.perform_create
             comment = form.save(commit=False)
             comment.user = user
             comment.game = game
-            comment.profile_picture = user.profile_picture  # same as serializer.save(profile_picture=user.profile_picture)
+            comment.profile_picture = user.profile_picture
             comment.save()
             return redirect("game details", pk=pk)
     else:
@@ -212,15 +218,16 @@ def game_buy(request, pk):
 def game_edit(request, pk):
     game = get_object_or_404(GameModel, pk=pk)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         form = GameEditForm(instance=game)
-    else:
-        form = GameEditForm(request.POST, request.FILES, instance=game)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
+        return render(request, "game/edit-game.html", {"form": form, "game": game})
 
-    return render(request, 'game/edit-game.html', {'form': form, 'game': game})
+    form = GameEditForm(request.POST, request.FILES, instance=game)
+    if form.is_valid():
+        form.save()
+        return redirect("index")
+
+    return render(request, "game/edit-game.html", {"form": form, "game": game})
 
 
 @require_POST
@@ -229,16 +236,15 @@ def game_delete(request, pk):
 
     if game.user != request.user:
         messages.error(request, "You do not have permission to delete this game.")
-        return redirect('index')
+        return redirect("index")
 
     game.delete()
     messages.success(request, "Game deleted successfully.")
-    return redirect('index')
+    return redirect("index")
 
 
 @login_required
 def seed_games(request):
-
     categories = [c[0] for c in GameModel._meta.get_field("category").choices]
     now = datetime.now().strftime("%m%d%H%M%S")
 
@@ -253,7 +259,7 @@ def seed_games(request):
         for i in range(1, 20)
     ])
 
-    return render(request, 'game/seed_games.html')
+    return render(request, "game/seed_games.html")
 
 
 @login_required
@@ -263,6 +269,6 @@ def load_games(request):
 
     try:
         call_command("loaddata", "initial_games.json")
-        return render(request, 'game/seed_games.html')
+        return render(request, "game/seed_games.html")
     except Exception as e:
         return HttpResponse(f"Error loading games: {e}")

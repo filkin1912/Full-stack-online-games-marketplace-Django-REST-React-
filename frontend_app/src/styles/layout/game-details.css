@@ -162,3 +162,78 @@
     z-index: 10;
     box-shadow: var(--shadow-soft);
 }
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1024px) {
+    .details-page-wrapper {
+        padding: 24px 12px 80px 12px;
+    }
+
+    #game-details {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-details-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .game-picture-block,
+    .game-info-block {
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .game-info-table th,
+    .game-info-table td {
+        font-size: var(--font-sm);
+        padding: 8px 10px;
+    }
+
+    .go-back-btn {
+        font-size: var(--font-sm);
+        padding: 6px 12px 6px 12px;
+    }
+
+    .go-back-icon {
+        right: -14px;
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .details-page-wrapper {
+        padding: 18px 8px 80px 8px;
+    }
+
+    #game-details {
+        padding: 14px;
+    }
+
+    .game-info-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .game-info-table th,
+    .game-info-table td {
+        white-space: nowrap;
+    }
+
+    .go-back-btn {
+        max-height: none;
+        padding-right: 32px;
+    }
+
+    .go-back-icon {
+        right: -12px;
+        width: 26px;
+        height: 26px;
+    }
+}

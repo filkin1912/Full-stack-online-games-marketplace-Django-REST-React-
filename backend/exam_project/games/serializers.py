@@ -3,8 +3,32 @@ from .models import GameModel
 from exam_project.common.models import BoughtGame
 
 
+# class GameSerializer(serializers.ModelSerializer):
+#     seller_display = serializers.CharField(source='user.display_name', read_only=True)
+#
+#     class Meta:
+#         model = GameModel
+#         fields = [
+#             'id', 'title', 'summary', 'price', 'category',
+#             'game_picture', 'user', 'seller_display', 'created_at'
+#         ]
+#         read_only_fields = ['id', 'user', 'seller_display']
+#
+#     def create(self, validated_data):
+#         validated_data['user'] = self.context['request'].user
+#         return super().create(validated_data)
 class GameSerializer(serializers.ModelSerializer):
     seller_display = serializers.CharField(source='user.display_name', read_only=True)
+    game_picture = serializers.SerializerMethodField()
+
+    def get_game_picture(self, obj):
+        if obj.game_picture:
+            return obj.game_picture.url
+        return None
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
 
     class Meta:
         model = GameModel
@@ -13,10 +37,6 @@ class GameSerializer(serializers.ModelSerializer):
             'game_picture', 'user', 'seller_display', 'created_at'
         ]
         read_only_fields = ['id', 'user', 'seller_display']
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
 
 
 class GameUpdateSerializer(serializers.ModelSerializer):

@@ -14,6 +14,8 @@ export const CatalogLayout = ({ children, totalItems }) => {
         sort,
         setSort,
         searchTerm,
+        games,
+        filteredGames,
     } = useGameContext();
 
     const location = useLocation();
@@ -22,21 +24,29 @@ export const CatalogLayout = ({ children, totalItems }) => {
         setPage(1);
     }, [location.pathname, searchTerm, setPage]);
 
+    const noGames = !games.length && !searchTerm.trim();
+    const noMatch = searchTerm.trim() && filteredGames.length === 0;
+
+    const headingText = noGames
+        ? "NO GAMES YET"
+        : noMatch
+        ? "NO SUCH A GAME"
+        : "ALL NEW GAMES";
+
     const totalPages = Math.ceil(totalItems / perPage);
 
     return (
         <>
-            <PerPageSelector
-                perPage={perPage}
-                setPerPage={setPerPage}
-                setPage={setPage}
-            />
+            <div className="controls-row">
+                <SortControls sort={sort} setSort={setSort} setPage={setPage} />
 
-            <SortControls
-                sort={sort}
-                setSort={setSort}
-                setPage={setPage}
-            />
+                <PerPageSelector
+                    perPage={perPage}
+                    setPerPage={setPerPage}
+                    setPage={setPage}
+                />
+            </div>
+
 
             {children}
 

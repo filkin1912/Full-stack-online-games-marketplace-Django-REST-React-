@@ -54,7 +54,12 @@ export const GameCard = ({
                         Details
                     </Link>
                 ) : (
-                    <span className="btn btn--details disabled">Details</span>
+                    <button
+                        className="btn btn--details"
+                        onClick={() => alert("You must be logged in to view game details.")}
+                    >
+                        Details
+                    </button>
                 )}
 
                 {/* BUY / PRICE BUTTON */}

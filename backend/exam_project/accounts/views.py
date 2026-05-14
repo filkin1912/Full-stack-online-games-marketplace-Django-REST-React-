@@ -49,7 +49,7 @@ class ProfileDetailsView(views.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['games_count'] = self.object.gamemodel_set.count()
+        context['games_count'] = self.object.games.count()
         return context
 
 

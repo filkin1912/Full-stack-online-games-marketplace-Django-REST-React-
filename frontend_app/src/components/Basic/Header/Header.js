@@ -1,18 +1,23 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../../context/AuthContext";
-import { useGameContext } from "../../../context/GameContext";
-import { useBoughtGamesContext } from "../../../context/BoughtGamesContext";
-import { useState } from "react";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useAuthContext} from "../../../context/AuthContext";
+import {useGameContext} from "../../../context/GameContext";
+import {useBoughtGamesContext} from "../../../context/BoughtGamesContext";
+import {useState} from "react";
 
 export const Header = () => {
-    const { isAuthenticated, onLogout, token, refreshUser } = useAuthContext();
-    const { handleSearch, refreshGames, resetPagination } = useGameContext();
-    const { fetchBoughtGames } = useBoughtGamesContext();
+    const {isAuthenticated, onLogout, token, refreshUser} = useAuthContext();
+    const {handleSearch, refreshGames, resetPagination} = useGameContext();
+    const {fetchBoughtGames} = useBoughtGamesContext();
 
     const location = useLocation();
     const navigate = useNavigate();
 
     const [searchValue, setSearchValue] = useState("");
+
+    // NEW: mobile menu state
+    const [menuOpen, setMenuOpen] = useState(false);
+    const toggleMenu = () => setMenuOpen(prev => !prev);
+    const closeMenu = () => setMenuOpen(false);
 
     const onSearchSubmit = (e) => {
         e.preventDefault();
@@ -30,6 +35,7 @@ export const Header = () => {
         resetSearch();
         await refreshGames();
         await refreshUser();
+        closeMenu();
         navigate("/");
     };
 
@@ -43,11 +49,18 @@ export const Header = () => {
                 },
             });
 
-            if (!res.ok) throw new Error("Failed to seed games");
+            // If games already exist, backend will NOT return 201
+            if (res.status !== 201) {
+                alert("20 games are already seeded!");
+                closeMenu();
+                return;
+            }
 
+            // Successful seeding
             alert("20 games created successfully!");
             await refreshGames();
             resetSearch();
+            closeMenu();
             navigate("/");
         } catch (err) {
             console.error("SEED ERROR:", err);
@@ -65,19 +78,30 @@ export const Header = () => {
                 },
             });
 
-            if (!res.ok) throw new Error("Failed to load games");
+            // Games already exist → backend returns 200
+            if (res.status === 200) {
+                alert("20 games are already fetched and available!");
+                closeMenu();
+                return;
+            }
 
-            await res.json();
-            alert("20 games loaded successfully!");
+            // Games successfully loaded → backend returns 201
+            if (res.status === 201) {
+                alert("20 games loaded successfully!");
+                await refreshGames();
+                resetSearch();
+                closeMenu();
+                navigate("/");
+                return;
+            }
 
-            await refreshGames();
-            resetSearch();
-            navigate("/");
+            throw new Error("Failed to load games");
         } catch (err) {
             console.error("LOAD ERROR:", err);
             alert("Error loading games");
         }
     };
+
 
     return (
         <header>
@@ -114,20 +138,16 @@ export const Header = () => {
                 )}
             </div>
 
+            {/* HAMBURGER BUTTON (visible on mobile) */}
+            <button className="hamburger-btn" onClick={toggleMenu}>≡</button>
+
+            {/* DESKTOP NAV */}
             <nav>
                 {isAuthenticated ? (
                     <>
-                        <Link to="#" onClick={loadGames} className="nav-btn">
-                            Load games
-                        </Link>
-
-                        <Link to="#" onClick={seedGames} className="nav-btn">
-                            Seed games
-                        </Link>
-
-                        <Link to="#" onClick={onLogout} className="nav-btn">
-                            LogOut
-                        </Link>
+                        <Link to="#" onClick={loadGames} className="nav-btn">Load games</Link>
+                        {/*<Link to="#" onClick={seedGames} className="nav-btn">Seed games</Link>*/}
+                        <Link to="#" onClick={onLogout} className="nav-btn">LogOut</Link>
 
                         <Link
                             to="/bought-games"
@@ -161,6 +181,58 @@ export const Header = () => {
                     </>
                 )}
             </nav>
+
+            {/* MOBILE NAV */}
+            <div className={`mobile-nav ${menuOpen ? "open" : ""}`}>
+                {isAuthenticated ? (
+                    <>
+                        <Link to="#" onClick={() => {
+                            loadGames();
+                            closeMenu();
+                        }} className="nav-btn">Load games</Link>
+                        {/*<Link to="#" onClick={() => {*/}
+                        {/*    seedGames();*/}
+                        {/*    closeMenu();*/}
+                        {/*}} className="nav-btn">Seed games</Link>*/}
+                        <Link to="#" onClick={() => {
+                            onLogout();
+                            closeMenu();
+                        }} className="nav-btn">LogOut</Link>
+
+                        <Link
+                            to="/bought-games"
+                            className="nav-btn"
+                            onClick={async () => {
+                                await fetchBoughtGames();
+                                await refreshUser();
+                                closeMenu();
+                            }}
+                        >
+                            Bought games
+                        </Link>
+
+                        <Link
+                            to="/my-games"
+                            className="nav-btn"
+                            onClick={async () => {
+                                await refreshGames();
+                                await refreshUser();
+                                closeMenu();
+                            }}
+                        >
+                            My games
+                        </Link>
+
+                        <Link to="/create" className="nav-btn" onClick={closeMenu}>Create Game</Link>
+                        <Link to="/user-details" className="nav-btn" onClick={closeMenu}>Profile</Link>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/login" className="nav-btn" onClick={closeMenu}>LogIn</Link>
+                        <Link to="/register" className="nav-btn" onClick={closeMenu}>Create Profile</Link>
+                    </>
+                )}
+            </div>
         </header>
     );
 };

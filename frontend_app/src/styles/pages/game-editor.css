@@ -166,6 +166,13 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    #create-page.auth,
+    .edit-game-container {
+        margin: 1.5em auto 4em auto;
+        padding: 16px;
+        max-width: 95vw;
+    }
+
     .edit-game-wrapper {
         flex-direction: column;
         align-items: center;
@@ -175,6 +182,41 @@
     .edit-game-right {
         width: 100%;
         max-width: 480px;
+    }
+
+    .picture-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .file-input {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    #create-page.auth,
+    .edit-game-container {
+        padding: 12px;
+    }
+
+    .edit-game-left,
+    .edit-game-right {
+        max-width: 100%;
+    }
+
+    .popup-box {
+        width: 90vw;
+        padding: 18px 16px;
+    }
+
+    .popup-box p {
+        font-size: 1rem;
+    }
+
+    .popup-box .btn {
+        width: 100%;
+        margin: 4px 0;
     }
 }
 

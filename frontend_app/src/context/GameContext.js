@@ -5,14 +5,14 @@ import {
     useMemo,
     useState,
 } from "react";
-import {useNavigate} from "react-router-dom";
-import {gameServiceFactory} from "../services/gameService";
-import {AuthContext} from "./AuthContext";
+import { useNavigate } from "react-router-dom";
+import { gameServiceFactory } from "../services/gameService";
+import { AuthContext } from "./AuthContext";
 
 export const GameContext = createContext();
 
-export const GameProvider = ({children}) => {
-    const {token, incrementGamesCount} = useContext(AuthContext) || {};
+export const GameProvider = ({ children }) => {
+    const { token, incrementGamesCount } = useContext(AuthContext) || {};
     const navigate = useNavigate();
 
     const [games, setGames] = useState([]);
@@ -24,11 +24,51 @@ export const GameProvider = ({children}) => {
 
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(12);
+
+    // ⭐ Sorting state
     const [sort, setSort] = useState("newest");
 
     const gameService = useMemo(() => gameServiceFactory(token), [token]);
 
-    // ✅ Load games from backend
+    // ⭐ Sorting logic
+    const sortGames = (list, sortType) => {
+        if (!Array.isArray(list)) return [];
+
+        const sorted = [...list];
+
+        switch (sortType) {
+            case "newest":
+                sorted.sort(
+                    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+                );
+                break;
+
+            case "oldest":
+                sorted.sort(
+                    (a, b) => new Date(a.created_at) - new Date(b.created_at)
+                );
+                break;
+
+            case "title-asc":
+                sorted.sort((a, b) =>
+                    a.title.localeCompare(b.title, "en", { sensitivity: "base" })
+                );
+                break;
+
+            case "title-desc":
+                sorted.sort((a, b) =>
+                    b.title.localeCompare(a.title, "en", { sensitivity: "base" })
+                );
+                break;
+
+            default:
+                break;
+        }
+
+        return sorted;
+    };
+
+    // ⭐ Load games from backend
     const refreshGames = async () => {
         try {
             setLoading(true);
@@ -37,8 +77,12 @@ export const GameProvider = ({children}) => {
             const result = await gameService.getAll();
             const list = Array.isArray(result) ? result : result?.results || [];
 
-            setGames(list);
+            // ⭐ Apply sorting
+            const sorted = sortGames(list, sort);
 
+            setGames(sorted);
+
+            // Reset filtered list if search is empty
             if (!searchTerm) {
                 setFilteredGames([]);
             }
@@ -51,13 +95,16 @@ export const GameProvider = ({children}) => {
 
     useEffect(() => {
         refreshGames();
-    }, [gameService]);
+    }, [gameService, sort]);
 
-    // ✅ Create a new game
+    // ⭐ Create a new game
     const onCreateGameSubmit = async (formData) => {
         try {
             const createdGame = await gameService.create(formData);
-            setGames((prev) => [createdGame, ...prev]);
+
+            // Add new game and re-sort
+            setGames((prev) => sortGames([createdGame, ...prev], sort));
+
             incrementGamesCount();
             return createdGame;
         } catch (err) {
@@ -65,31 +112,30 @@ export const GameProvider = ({children}) => {
         }
     };
 
-    // ✅ Edit an existing game
+    // ⭐ Edit an existing game
     const onGameEditSubmit = async (gameId, formData) => {
         try {
             const updatedGame = await gameService.edit(gameId, formData);
 
-            // Update the game in local state
             setGames((prev) =>
-                prev.map((g) =>
-                    Number(g.id) === Number(gameId)
-                        ? {...g, ...updatedGame}
-                        : g
+                sortGames(
+                    prev.map((g) =>
+                        Number(g.id) === Number(gameId)
+                            ? { ...g, ...updatedGame }
+                            : g
+                    ),
+                    sort
                 )
             );
 
-            // Refresh full list from backend to avoid stale data
             await refreshGames();
-
             return updatedGame;
         } catch (err) {
             throw err;
         }
     };
 
-
-    // ✅ Delete a game by ID
+    // ⭐ Delete a game
     const onGameDeleteSubmit = async (gameId) => {
         try {
             await gameService.remove(gameId);
@@ -100,7 +146,7 @@ export const GameProvider = ({children}) => {
         }
     };
 
-    // ✅ Search games by title
+    // ⭐ Search games
     const handleSearch = (term) => {
         const normalized = term.trim();
         setPage(1);
@@ -123,24 +169,29 @@ export const GameProvider = ({children}) => {
         setPage(1);
     };
 
-    // ✅ Context value exposed to consumers
+    // ⭐ Exposed context
     const contextValue = {
         games,
         filteredGames,
         searchTerm,
         loading,
         error,
+
         handleSearch,
         refreshGames,
+
         page,
         setPage,
         perPage,
         setPerPage,
+
         sort,
         setSort,
+
         onCreateGameSubmit,
-        onGameEditSubmit, // ✅ Now available to EditGame.js
+        onGameEditSubmit,
         onGameDeleteSubmit,
+
         resetPagination,
     };
 
