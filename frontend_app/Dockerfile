@@ -8,11 +8,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy source code including .env.local
+# Copy source code
 COPY . .
 
-# Ensure .env.local is available during build
-#COPY .env .env
+# Set at build time in CI (Azure/GCP): docker build --build-arg REACT_APP_API_URL=...
+ARG REACT_APP_API_URL=http://localhost:8001
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Build the React app
 RUN npm run build
