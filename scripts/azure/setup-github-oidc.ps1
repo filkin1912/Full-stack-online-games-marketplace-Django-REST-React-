@@ -1,8 +1,15 @@
 # One-time Azure + GitHub OIDC setup for gamesplay deployment.
 # Run in PowerShell after: az login
-# Repo: filkin1912/Full-stack-online-games-marketplace-Django-REST-React-
+# If SSL errors: .\scripts\azure\fix-azure-ssl.ps1  (Avast HTTPS scanning must be off)
+# Alternative: run setup-github-oidc.sh in https://shell.azure.com
 
 $ErrorActionPreference = "Stop"
+
+$FixScript = Join-Path $PSScriptRoot "fix-azure-ssl.ps1"
+if (Test-Path $FixScript) {
+    & $FixScript
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
 
 $RepoOwner = "filkin1912"
 $RepoName = "Full-stack-online-games-marketplace-Django-REST-React-"
@@ -31,9 +38,12 @@ az acr create `
 $AcrId = (az acr show --name $AcrName --resource-group $ResourceGroup --query id -o tsv)
 
 Write-Host "Creating Container Apps environment..."
-az extension add --name containerapp --upgrade 2>$null
-az provider register --namespace Microsoft.App --wait 2>$null
-az provider register --namespace Microsoft.OperationalInsights --wait 2>$null
+az extension add --name containerapp --upgrade
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to install containerapp extension. Check network/SSL (run fix-azure-ssl.ps1)."
+}
+az provider register --namespace Microsoft.App --wait
+az provider register --namespace Microsoft.OperationalInsights --wait
 
 az containerapp env create `
   --name $EnvName `
