@@ -97,11 +97,16 @@ TEMPLATES = [
 DATABASE_URL = (os.getenv("DATABASE_URL") or "").strip()
 
 if DATABASE_URL:
+    _db_ssl = (os.getenv("DATABASE_SSL_REQUIRE", "true") or "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
             conn_max_age=600,
-            ssl_require=True,
+            ssl_require=_db_ssl,
         )
     }
 else:

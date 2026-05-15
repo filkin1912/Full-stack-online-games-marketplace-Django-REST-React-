@@ -18,6 +18,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
+# collectstatic runs before runtime env; .env.local is not in the image
+ENV SECRET_KEY=build-collectstatic-placeholder
+ENV DATABASE_URL=
+
 # Collect static files during build (Cloud Run filesystem is read-only)
 RUN python manage.py collectstatic --noinput
 
