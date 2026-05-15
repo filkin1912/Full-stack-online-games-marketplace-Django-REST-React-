@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
     environment:
-      SECRET_KEY: django-insecure-ol2x@g2v6!n_6jh$5qh-fb$75sdu214da^t=1bq&+7c!($v+cg
+      SECRET_KEY: django-insecure-ol2x@g2v6!n_6jh$$5qh-fb$$75sdu214da^t=1bq&+7c!($$v+cg)
       DEBUG: "True"
       ALLOWED_HOSTS: localhost,127.0.0.1,backend,gamesplay-backend,0.0.0.0
       DATABASE_URL: postgresql://examuser:exampass@db:5432/examdb
