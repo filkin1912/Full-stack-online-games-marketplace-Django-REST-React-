@@ -8,8 +8,7 @@ set -euo pipefail
 REPO_OWNER="filkin1912"
 REPO_NAME="Full-stack-online-games-marketplace-Django-REST-React-"
 APP_NAME="github-gamesplay-deploy"
-LOCATION="westeurope"
-RESOURCE_GROUP="rg-gamesplay"
+RESOURCE_GROUP="${AZURE_RESOURCE_GROUP:-deployment_via_github}"
 ENV_NAME="gamesplay-env"
 BACKEND_APP="gamesplay-backend"
 FRONTEND_APP="gamesplay-frontend"
@@ -19,7 +18,15 @@ SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 TENANT_ID=$(az account show --query tenantId -o tsv)
 
 echo "Subscription: $SUBSCRIPTION_ID"
-az group create --name "$RESOURCE_GROUP" --location "$LOCATION" --output none
+echo "Using resource group: $RESOURCE_GROUP"
+LOCATION=$(az group show --name "$RESOURCE_GROUP" --query location -o tsv 2>/dev/null) || true
+if [ -z "$LOCATION" ]; then
+  echo "Resource group '$RESOURCE_GROUP' not found."
+  echo "Copy the exact name from Azure Portal (e.g. geployment_via_github if typo) then:"
+  echo "  AZURE_RESOURCE_GROUP='your-rg-name' bash scripts/azure/setup-github-oidc.sh"
+  exit 1
+fi
+echo "Location (from existing group): $LOCATION"
 
 echo "Creating ACR $ACR_NAME..."
 az acr create --resource-group "$RESOURCE_GROUP" --name "$ACR_NAME" --sku Basic --admin-enabled false --output none

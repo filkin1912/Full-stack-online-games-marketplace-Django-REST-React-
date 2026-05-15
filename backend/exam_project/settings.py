@@ -92,17 +92,26 @@ TEMPLATES = [
 ]
 
 # ==========================
-# Database (Neon PostgreSQL)
+# Database (PostgreSQL via DATABASE_URL, or SQLite if unset)
 # ==========================
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = (os.getenv("DATABASE_URL") or "").strip()
 
-DATABASES = {
-    "default": dj_database_url.parse(
-        DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=True,
-    )
-}
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    # Local dev: use postgres in docker-compose. Cloud (Azure): no public DB until you set DATABASE_URL.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # ==========================
 # Fixtures
@@ -140,15 +149,23 @@ for origin in extra_csrf:
         CSRF_TRUSTED_ORIGINS.append(origin)
 
 # ==========================
-# Cloudinary
+# Cloudinary (optional — use local media if name/key/secret not all set)
 # ==========================
+_cloud_name = (os.getenv("CLOUDINARY_CLOUD_NAME") or "").strip()
+_cloud_key = (os.getenv("CLOUDINARY_API_KEY") or "").strip()
+_cloud_secret = (os.getenv("CLOUDINARY_API_SECRET") or "").strip()
+USE_CLOUDINARY_MEDIA = bool(_cloud_name and _cloud_key and _cloud_secret)
+
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
-    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
+    "CLOUD_NAME": _cloud_name or None,
+    "API_KEY": _cloud_key or None,
+    "API_SECRET": _cloud_secret or None,
 }
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+if USE_CLOUDINARY_MEDIA:
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+else:
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # ==========================
 # Django REST Framework

@@ -2,6 +2,14 @@
 # Run in PowerShell after: az login
 # If SSL errors: .\scripts\azure\fix-azure-ssl.ps1  (Avast HTTPS scanning must be off)
 # Alternative: run setup-github-oidc.sh in https://shell.azure.com
+#
+# Default resource group: deployment_via_github (North Europe in portal). Override if the portal name differs:
+#   .\setup-github-oidc.ps1 -ResourceGroup 'geployment_via_github'
+
+param(
+  [Parameter(Mandatory = $false)]
+  [string] $ResourceGroup = "deployment_via_github"
+)
 
 $ErrorActionPreference = "Stop"
 
@@ -14,8 +22,6 @@ if (Test-Path $FixScript) {
 $RepoOwner = "filkin1912"
 $RepoName = "Full-stack-online-games-marketplace-Django-REST-React-"
 $AppName = "github-gamesplay-deploy"
-$Location = "westeurope"
-$ResourceGroup = "rg-gamesplay"
 $EnvName = "gamesplay-env"
 $BackendApp = "gamesplay-backend"
 $FrontendApp = "gamesplay-frontend"
@@ -25,8 +31,16 @@ $SubscriptionId = (az account show --query id -o tsv)
 $TenantId = (az account show --query tenantId -o tsv)
 
 Write-Host "Subscription: $SubscriptionId"
-Write-Host "Creating resource group $ResourceGroup in $Location..."
-az group create --name $ResourceGroup --location $Location | Out-Null
+Write-Host "Using resource group: $ResourceGroup"
+$Location = (az group show --name $ResourceGroup --query location -o tsv 2>$null)
+if (-not $Location) {
+    Write-Host ""
+    Write-Host "Resource group '$ResourceGroup' was not found." -ForegroundColor Red
+    Write-Host "Open Azure Portal -> Resource groups and copy the exact name (e.g. geployment_via_github if it was created with a typo)." -ForegroundColor Yellow
+    Write-Host "Then run: .\setup-github-oidc.ps1 -ResourceGroup 'EXACT_NAME_FROM_PORTAL'"
+    exit 1
+}
+Write-Host "Location (from existing group): $Location"
 
 Write-Host "Creating ACR $AcrName..."
 az acr create `
@@ -99,14 +113,21 @@ $AppId = (az ad app create --display-name $AppName --query appId -o tsv)
 $SpObjectId = (az ad sp create --id $AppId --query id -o tsv)
 
 foreach ($Branch in @("main", "ci-test")) {
-  az ad app federated-credential create `
-    --id $AppId `
-    --parameters "{
-      `"name`": `"github-$Branch`",
-      `"issuer`": `"https://token.actions.githubusercontent.com`",
-      `"subject`": `"repo:${RepoOwner}/${RepoName}:ref:refs/heads/${Branch}`",
-      `"audiences`": [`"api://AzureADTokenExchange`"]
-    }" | Out-Null
+  $credFile = Join-Path ([System.IO.Path]::GetTempPath()) ("github-oidc-$Branch-" + [Guid]::NewGuid().ToString() + ".json")
+  $subject = "repo:$RepoOwner/$RepoName" + ":ref:refs/heads/$Branch"
+  $credBody = @{
+    name      = "github-$Branch"
+    issuer    = "https://token.actions.githubusercontent.com"
+    subject   = $subject
+    audiences = @("api://AzureADTokenExchange")
+  } | ConvertTo-Json -Compress -Depth 5
+  [System.IO.File]::WriteAllText($credFile, $credBody, [System.Text.UTF8Encoding]::new($false))
+  try {
+    az ad app federated-credential create --id $AppId --parameters $credFile
+    if ($LASTEXITCODE -ne 0) { throw "federated-credential create failed for $Branch" }
+  } finally {
+    Remove-Item -Path $credFile -Force -ErrorAction SilentlyContinue
+  }
 }
 
 $RgScope = (az group show --name $ResourceGroup --query id -o tsv)

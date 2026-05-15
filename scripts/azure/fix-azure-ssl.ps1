@@ -2,13 +2,17 @@
 # Run once: .\scripts\azure\fix-azure-ssl.ps1
 
 $ErrorActionPreference = "Stop"
+$AzureNeedsLogin = $false
 
 function Test-AzureCliSsl {
     $prev = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    $null = az group list --query "[0].name" -o tsv 2>$null
+    $err = az group list --query "[0].name" -o tsv 2>&1 | Out-String
     $ok = ($LASTEXITCODE -eq 0)
     $ErrorActionPreference = $prev
+    if (-not $ok -and $err -match "invalid_grant|InteractionRequired|az login") {
+        $script:AzureNeedsLogin = $true
+    }
     return $ok
 }
 
@@ -36,8 +40,19 @@ Remove-Item Env:REQUESTS_CA_BUNDLE -ErrorAction SilentlyContinue
 Remove-Item Env:AZURE_CLI_DISABLE_CONNECTION_VERIFICATION -ErrorAction SilentlyContinue
 
 if (Test-AzureCliSsl) {
-    Write-Host "Azure CLI SSL is OK. You can run setup-github-oidc.ps1 now."
+    Write-Host "Azure CLI is OK. You can run setup-github-oidc.ps1 now."
     exit 0
+}
+
+if ($AzureNeedsLogin) {
+    Write-Host ""
+    Write-Host "SSL is OK. Your Azure login session expired." -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Run these commands, then run this script again:" -ForegroundColor Cyan
+    Write-Host "  az logout"
+    Write-Host "  az login"
+    Write-Host ""
+    exit 1
 }
 
 if (Test-AvastMitm) {
@@ -51,7 +66,7 @@ if (Test-AvastMitm) {
     Write-Host ""
     Write-Host "Steps:" -ForegroundColor Cyan
     Write-Host "  1. Open Avast -> Menu (three lines) -> Settings"
-    Write-Host "  2. Protection -> Core Shields -> Web Shield -> Customize"
+    Write-Host "  2. Scam Guardian -> Web Guard"
     Write-Host "  3. Turn OFF: 'Enable HTTPS scanning' (or 'Scan SSL connections')"
     Write-Host "  4. Confirm / restart browser if prompted"
     Write-Host "  5. Close and reopen this terminal"
@@ -63,7 +78,7 @@ if (Test-AvastMitm) {
     exit 1
 }
 
-Write-Host "SSL still failing (non-Avast). Try:" -ForegroundColor Yellow
+Write-Host "Azure CLI still failing. Try:" -ForegroundColor Yellow
 Write-Host "  - Disable other antivirus HTTPS scanning"
 Write-Host "  - Run from Azure Cloud Shell: https://shell.azure.com"
 Write-Host "  - Or use GitHub Actions only (secrets + push) after portal setup"
