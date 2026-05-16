@@ -1,6 +1,9 @@
 import { requestFactory } from "./requester";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = (process.env.REACT_APP_API_URL || "http://127.0.0.1:8000").replace(
+    /\/$/,
+    "",
+);
 const authBase = `${API_URL}/api/auth`;
 const accountsBase = `${API_URL}/api/accounts`;
 

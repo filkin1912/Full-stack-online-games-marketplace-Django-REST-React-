@@ -12,7 +12,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Set at build time in CI (Azure/GCP): docker build --build-arg REACT_APP_API_URL=...
-ARG REACT_APP_API_URL=http://localhost:8001
+ARG REACT_APP_API_URL=http://localhost:8000
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Build the React app

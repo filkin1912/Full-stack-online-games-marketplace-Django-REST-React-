@@ -1,7 +1,7 @@
 import {requestFactory} from "./requester";
 import {boughtGamesServiceFactory} from "./boughtGameService";
 
-const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:8001/fast").replace(/\/$/, "");
+const API_URL = (process.env.REACT_APP_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 const baseUrl = `${API_URL}/api/games/`;
 
 

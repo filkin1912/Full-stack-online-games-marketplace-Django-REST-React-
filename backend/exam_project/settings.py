@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.urls import reverse_lazy
 import os
 from dotenv import load_dotenv
-import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -92,31 +91,18 @@ TEMPLATES = [
 ]
 
 # ==========================
-# Database (PostgreSQL via DATABASE_URL, or SQLite if unset)
+# Database (always PostgreSQL)
 # ==========================
-DATABASE_URL = (os.getenv("DATABASE_URL") or "").strip()
-
-if DATABASE_URL:
-    _db_ssl = (os.getenv("DATABASE_SSL_REQUIRE", "true") or "").strip().lower() in (
-        "1",
-        "true",
-        "yes",
-    )
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=_db_ssl,
-        )
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "examdb"),
+        "USER": os.getenv("DB_USER", "examuser"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "exampass"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
-else:
-    # Local dev: use postgres in docker-compose. Cloud (Azure): no public DB until you set DATABASE_URL.
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
 
 # ==========================
 # Fixtures

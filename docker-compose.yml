@@ -20,17 +20,20 @@ services:
     container_name: gamesplay-backend
     entrypoint: [ "/app/entrypoint.sh" ]
     ports:
-      - "8001:8000"
+      - "8000:8000"
     depends_on:
       - db
     environment:
       SECRET_KEY: django-insecure-ol2x@g2v6!n_6jh$$5qh-fb$$75sdu214da^t=1bq&+7c!($$v+cg)
       DEBUG: "True"
       ALLOWED_HOSTS: localhost,127.0.0.1,backend,gamesplay-backend,0.0.0.0
-      DATABASE_URL: postgresql://examuser:exampass@db:5432/examdb
-      DATABASE_SSL_REQUIRE: "false"
-      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://localhost:8001
-      CSRF_TRUSTED_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:8001
+      DB_NAME: examdb
+      DB_USER: examuser
+      DB_PASSWORD: exampass
+      DB_HOST: db
+      DB_PORT: "5432"
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000
+      CSRF_TRUSTED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://localhost:8000,http://127.0.0.1:8000
       SESSION_COOKIE_NAME: docker_sessionid
       PORT: "8000"
     volumes:
@@ -41,10 +44,10 @@ services:
       context: ./frontend_app
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: http://localhost:8001/
+        REACT_APP_API_URL: http://127.0.0.1:8000/
     container_name: gamesplay-frontend
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       - backend
     command: serve -s build -l 3000

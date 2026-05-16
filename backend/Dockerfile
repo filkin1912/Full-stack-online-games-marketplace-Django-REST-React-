@@ -20,7 +20,11 @@ COPY . .
 
 # collectstatic runs before runtime env; .env.local is not in the image
 ENV SECRET_KEY=build-collectstatic-placeholder
-ENV DATABASE_URL=
+ENV DB_NAME=examdb
+ENV DB_USER=examuser
+ENV DB_PASSWORD=exampass
+ENV DB_HOST=db
+ENV DB_PORT=5432
 
 # Collect static files during build (Cloud Run filesystem is read-only)
 RUN python manage.py collectstatic --noinput
