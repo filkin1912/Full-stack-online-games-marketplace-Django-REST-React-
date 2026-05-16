@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import {authServiceFactory} from "../services/authService";
 import {userServiceFactory} from "../services/userService";
+import {API_BASE_URL} from "../config/api";
 
 export const AuthContext = createContext();
 
@@ -112,7 +113,7 @@ export const AuthProvider = ({children}) => {
     const onLogout = async () => {
         try {
             if (auth.accessToken) {
-                await fetch(`${process.env.REACT_APP_API_URL}/api/chatbot/clear/`, {
+                await fetch(`${API_BASE_URL}/api/chatbot/clear/`, {
                     method: "POST",
                     headers: {
                         Authorization: `Bearer ${auth.accessToken}`,

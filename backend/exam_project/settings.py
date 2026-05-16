@@ -93,6 +93,12 @@ TEMPLATES = [
 # ==========================
 # Database (always PostgreSQL)
 # ==========================
+_db_options = {}
+if os.getenv("DB_SSLMODE"):
+    _db_options["sslmode"] = os.getenv("DB_SSLMODE")
+if os.getenv("DB_CHANNEL_BINDING"):
+    _db_options["channel_binding"] = os.getenv("DB_CHANNEL_BINDING")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -101,6 +107,7 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASSWORD", "exampass"),
         "HOST": os.getenv("DB_HOST", "db"),
         "PORT": os.getenv("DB_PORT", "5432"),
+        "OPTIONS": _db_options,
     }
 }
 

@@ -1,8 +1,8 @@
 import {requestFactory} from "./requester";
 import {boughtGamesServiceFactory} from "./boughtGameService";
+import {API_BASE_URL} from "../config/api";
 
-const API_URL = (process.env.REACT_APP_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
-const baseUrl = `${API_URL}/api/games/`;
+const baseUrl = `${API_BASE_URL}/api/games/`;
 
 
 export const gameServiceFactory = (token) => {

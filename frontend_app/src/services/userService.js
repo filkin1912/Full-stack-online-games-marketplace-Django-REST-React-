@@ -1,6 +1,7 @@
 import { requestFactory } from "./requester";
+import { API_BASE_URL } from "../config/api";
 
-const baseUrl = `${process.env.REACT_APP_API_URL}/api/accounts`;
+const baseUrl = `${API_BASE_URL}/api/accounts`;
 
 export const userServiceFactory = (token) => {
     const request = requestFactory(token);

@@ -32,16 +32,90 @@ def detect_and_save_preferences(user, message):
     message_lower = message.lower()
 
     # Detect budget
-    if "budget" in message_lower or "$" in message_lower:
-        match = re.search(r"\$?(\d+)", message_lower)
-        if match:
-            save_memory(user, "budget", match.group(1))
+    budget = extract_budget(message_lower)
+    if budget is not None:
+        save_memory(user, "budget", str(budget))
 
     # Detect genre
     genres = ["action", "adventure", "puzzle", "strategy", "sports", "board"]
     for g in genres:
         if g in message_lower:
             save_memory(user, "preferred_genre", g.capitalize())
+
+
+def extract_budget(message):
+    budget_filter = extract_budget_filter(message)
+    if budget_filter is None:
+        return None
+    return budget_filter[0]
+
+
+def extract_budget_filter(message):
+    message_lower = (message or "").lower()
+    budget_patterns = (
+        (r"(?:under|below|less than|cheaper than|price.*under|price.*below)\s*\$?\s*(\d+(?:\.\d+)?)", False),
+        (r"(?:max(?:imum)?|up to|budget|price|cost)\s*\$?\s*(\d+(?:\.\d+)?)", True),
+        (r"\$?\s*(\d+(?:\.\d+)?)\s*(?:usd|dollars?)", True),
+        (r"\$\s*(\d+(?:\.\d+)?)", True),
+    )
+
+    for pattern, inclusive in budget_patterns:
+        match = re.search(pattern, message_lower)
+        if match:
+            return float(match.group(1)), inclusive
+
+    if any(word in message_lower for word in ("budget", "price", "cost", "cheap")):
+        match = re.search(r"(\d+(?:\.\d+)?)", message_lower)
+        if match:
+            return float(match.group(1)), True
+
+    return None
+
+
+def game_price(game):
+    try:
+        return float(game.get("price") or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def matches_budget(game, budget, inclusive):
+    price = game_price(game)
+    if inclusive:
+        return price <= budget
+    return price < budget
+
+
+def fallback_recommendation(message, game_data):
+    message_lower = (message or "").lower()
+    genres = ["action", "adventure", "puzzle", "strategy", "sports", "board", "other"]
+    selected_genre = next((genre for genre in genres if genre in message_lower), None)
+    budget_filter = extract_budget_filter(message_lower)
+
+    games = game_data
+    if selected_genre:
+        games = [
+            game for game in game_data
+            if (game.get("category") or "").lower() == selected_genre
+        ]
+    if budget_filter is not None:
+        budget, inclusive = budget_filter
+        games = [
+            game for game in games
+            if matches_budget(game, budget, inclusive)
+        ]
+
+    games = sorted(games, key=game_price, reverse=True)
+
+    if not games:
+        return "No games found."
+
+    intro = "Here are games matching your request:"
+    lines = [
+        f"- {game.get('title')} (${game.get('price')})"
+        for game in games[:8]
+    ]
+    return "\n".join([intro, *lines])
 
 
 # -----------------------------
@@ -57,8 +131,12 @@ def ask_llm(user, message, game_data):
     # Load memory
     memory_text = load_memory(user)
 
+    api_key = (settings.AI_API_KEY or "").strip()
+    if not api_key or api_key == "your-openrouter-or-openai-key":
+        return fallback_recommendation(message, game_data)
+
     headers = {
-        "Authorization": f"Bearer {settings.AI_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "Referer": "http://localhost:3000",
         "X-Title": "GamesPlay Chatbot",
@@ -105,8 +183,11 @@ Respond following the strict formatting rules above.
         ]
     }
 
-    response = requests.post(url, json=payload, headers=headers)
-    data = response.json()
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        data = response.json()
+    except requests.RequestException as exc:
+        return f"AI service error: {exc}"
 
     print("OPENROUTER RESPONSE:", data)
 

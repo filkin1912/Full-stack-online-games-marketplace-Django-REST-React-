@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import {useAuthContext} from "../../context/AuthContext";
+import {API_BASE_URL} from "../../config/api";
 
 export const Chatbot = () => {
     const {userEmail, token, isAuthenticated} = useAuthContext();
@@ -8,8 +9,6 @@ export const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [typing, setTyping] = useState(false);
-
-    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -39,7 +38,7 @@ export const Chatbot = () => {
         setTyping(true);
 
         try {
-            const response = await fetch(`${API_URL}/api/chatbot/`, {
+            const response = await fetch(`${API_BASE_URL}/api/chatbot/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

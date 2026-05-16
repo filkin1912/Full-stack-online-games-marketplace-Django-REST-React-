@@ -53,6 +53,8 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
+          DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+          DB_CHANNEL_BINDING: ${{ secrets.DB_CHANNEL_BINDING }}
           CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
           CSRF_TRUSTED_ORIGINS: ${{ secrets.CSRF_TRUSTED_ORIGINS }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
@@ -73,6 +75,8 @@ jobs:
               "DB_PASSWORD=${DB_PASSWORD}" \
               "DB_HOST=${DB_HOST}" \
               "DB_PORT=${DB_PORT}" \
+              "DB_SSLMODE=${DB_SSLMODE}" \
+              "DB_CHANNEL_BINDING=${DB_CHANNEL_BINDING}" \
               "CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}" \
               "CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}" \
               "CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}" \
@@ -97,7 +101,7 @@ jobs:
         run: |
           ACR="${{ secrets.AZURE_ACR_NAME }}.azurecr.io"
           docker build \
-            --build-arg REACT_APP_API_URL="${{ steps.backend.outputs.api_url }}/" \
+            --build-arg REACT_APP_API_URL="${{ steps.backend.outputs.api_url }}" \
             -t "${ACR}/gamesplay-frontend:${IMAGE_TAG}" \
             -t "${ACR}/gamesplay-frontend:latest" \
             ./frontend_app

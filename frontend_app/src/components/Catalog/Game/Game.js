@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useBoughtGamesContext } from "../../../context/BoughtGamesContext";
 import noImage from "../../../images/no-image.jpg";
+import { API_BASE_URL } from "../../../config/api";
 
 export const GameCard = ({
     game,
@@ -30,7 +31,7 @@ export const GameCard = ({
     const imageUrl = !isInvalid
         ? rawImage.startsWith("http")
             ? rawImage
-            : `${process.env.REACT_APP_API_URL}${rawImage}`
+            : `${API_BASE_URL}${rawImage}`
         : noImage;
 
     const title = game.title || "Untitled Game";

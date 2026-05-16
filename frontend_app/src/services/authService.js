@@ -1,11 +1,8 @@
 import { requestFactory } from "./requester";
+import { API_BASE_URL } from "../config/api";
 
-const API_URL = (process.env.REACT_APP_API_URL || "http://127.0.0.1:8000").replace(
-    /\/$/,
-    "",
-);
-const authBase = `${API_URL}/api/auth`;
-const accountsBase = `${API_URL}/api/accounts`;
+const authBase = `${API_BASE_URL}/api/auth`;
+const accountsBase = `${API_BASE_URL}/api/accounts`;
 
 export const authServiceFactory = (token) => {
     const request = requestFactory(token);

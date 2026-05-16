@@ -3,6 +3,7 @@ import {useAuthContext} from "../../../context/AuthContext";
 import {useGameContext} from "../../../context/GameContext";
 import {useBoughtGamesContext} from "../../../context/BoughtGamesContext";
 import {useState} from "react";
+import {API_BASE_URL} from "../../../config/api";
 
 export const Header = () => {
     const {isAuthenticated, onLogout, token, refreshUser} = useAuthContext();
@@ -41,7 +42,7 @@ export const Header = () => {
 
     const seedGames = async () => {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/games/seed/`, {
+            const res = await fetch(`${API_BASE_URL}/api/games/seed/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -70,7 +71,7 @@ export const Header = () => {
 
     const loadGames = async () => {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/games/load/`, {
+            const res = await fetch(`${API_BASE_URL}/api/games/load/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
