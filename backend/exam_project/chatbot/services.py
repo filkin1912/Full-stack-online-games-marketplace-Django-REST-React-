@@ -17,11 +17,11 @@ def save_memory(user, key, value):
 
 
 def load_memory(user):
-    memories = ChatMemory.objects.filter(user=user)
-    if not memories.exists():
+    memories = list(ChatMemory.objects.filter(user=user).values_list("key", "value"))
+    if not memories:
         return "No stored preferences."
 
-    return "\n".join([f"{m.key}: {m.value}" for m in memories])
+    return "\n".join([f"{key}: {value}" for key, value in memories])
 
 
 def clear_memory(user):

@@ -20,6 +20,8 @@ class AppUserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'full_name', 'display_name', 'games_count']
 
     def get_games_count(self, obj):
+        if hasattr(obj, "games_count"):
+            return obj.games_count
         return GameModel.objects.filter(user=obj).count()
 
     def get_profile_picture(self, obj):

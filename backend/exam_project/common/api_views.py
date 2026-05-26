@@ -13,7 +13,11 @@ class CommentListCreateApiView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         game_id = self.kwargs["game_id"]
-        return GameComment.objects.filter(game_id=game_id).order_by("created_at")
+        return (
+            GameComment.objects.filter(game_id=game_id)
+            .select_related("user")
+            .order_by("created_at")
+        )
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

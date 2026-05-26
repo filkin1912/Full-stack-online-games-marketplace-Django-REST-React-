@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 from datetime import datetime
 import random
 from decimal import Decimal
+from django.db.models import Sum
 from django.core.management import call_command
 from django.http import HttpResponse
 from django.db import IntegrityError
@@ -63,14 +64,18 @@ class BoughtGamesView(Pagination, SortingMixin, LoginRequiredMixin, views.ListVi
     context_object_name = "bought_games"
 
     def get_queryset(self):
-        qs = BoughtGame.objects.filter(user=self.request.user)
+        qs = BoughtGame.objects.filter(user=self.request.user).select_related("game")
         return self.apply_sorting(qs, prefix="game__")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         qs = self.get_queryset()
 
-        total_spent = sum(bg.game.price for bg in qs)
+        total_spent = (
+            BoughtGame.objects.filter(user=self.request.user)
+            .aggregate(total=Sum("game__price"))["total"]
+            or 0
+        )
 
         context.update({
             "search_query": self.request.GET.get("q", ""),
@@ -198,8 +203,7 @@ def game_buy(request, pk):
         messages.error(request, "You cannot buy your own game.")
         return redirect("index")
 
-    purchase, created = BoughtGame.objects.get_or_create(user=user, game=game)
-    if not created:
+    if BoughtGame.objects.filter(user=user, game=game).exists():
         messages.warning(request, "You already own this game.")
         return redirect("index")
 
@@ -207,8 +211,13 @@ def game_buy(request, pk):
         messages.error(request, "Not enough money to buy this game.")
         return redirect("index")
 
+    BoughtGame.objects.create(user=user, game=game)
     user.money -= game.price
     user.save()
+    if game.user_id:
+        seller = game.user
+        seller.money += game.price
+        seller.save()
 
     messages.success(request, f"You bought {game.title} successfully!")
     return redirect("bought games")

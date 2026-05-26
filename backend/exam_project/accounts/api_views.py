@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.db.models import Count
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import AppUserSerializer, AppUserUpdateSerializer
@@ -27,7 +28,7 @@ class MeRetrieveUpdateApiView(generics.RetrieveUpdateAPIView):
 class UsersListApiView(generics.ListAPIView):
     serializer_class = AppUserSerializer
     permission_classes = [permissions.IsAdminUser]
-    queryset = User.objects.all()
+    queryset = User.objects.annotate(games_count=Count("games")).all()
 
 
 class UserDetailApiView(generics.RetrieveUpdateAPIView):
