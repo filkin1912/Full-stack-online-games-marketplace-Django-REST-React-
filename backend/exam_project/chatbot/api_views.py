@@ -14,12 +14,14 @@ class ChatbotAPIView(APIView):
         user = request.user
         message = request.data.get("message", "")
 
-        # Fetch game data for the LLM
-        games = GameModel.objects.all().values(
-            "title", "summary", "price", "category"
+        # Full catalog as fallback; ask_llm uses RAG top-k when enabled
+        games = list(
+            GameModel.objects.all().values(
+                "title", "summary", "price", "category"
+            )
         )
 
-        reply = ask_llm(user=user, message=message, game_data=list(games))
+        reply = ask_llm(user=user, message=message, game_data=games)
 
         return Response({"reply": reply})
 

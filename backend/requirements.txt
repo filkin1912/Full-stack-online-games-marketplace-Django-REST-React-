@@ -35,6 +35,7 @@ openai==2.29.0
 packaging==25.0
 pillow==10.2.0
 psycopg2-binary==2.9.9
+pgvector==0.4.1
 pydantic==2.12.5
 pydantic_core==2.41.5
 Pygments==2.19.2

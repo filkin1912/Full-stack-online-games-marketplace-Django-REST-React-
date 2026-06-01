@@ -19,6 +19,16 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 AI_API_KEY = os.getenv("AI_API_KEY")
 
+# Chatbot RAG (pgvector + OpenRouter embeddings)
+RAG_ENABLED = os.getenv("RAG_ENABLED", "True") == "True"
+RAG_EMBEDDING_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "openai/text-embedding-3-small")
+RAG_EMBEDDING_DIMENSIONS = int(os.getenv("RAG_EMBEDDING_DIMENSIONS", "1536"))
+RAG_TOP_K = int(os.getenv("RAG_TOP_K", "10"))
+OPENROUTER_EMBEDDINGS_URL = os.getenv(
+    "OPENROUTER_EMBEDDINGS_URL",
+    "https://openrouter.ai/api/v1/embeddings",
+)
+
 
 # Cloud Run passes ALLOWED_HOSTS as comma-separated string
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")

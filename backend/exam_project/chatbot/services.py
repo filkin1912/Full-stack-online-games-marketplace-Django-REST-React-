@@ -1,7 +1,30 @@
+import logging
 import re
+
 import requests
 from django.conf import settings
+
 from .models import ChatMemory
+
+logger = logging.getLogger(__name__)
+
+SHOP_ONLY_SYSTEM_RULES = (
+    "You are a game recommendation assistant for THIS SHOP ONLY. "
+    "You may ONLY recommend games listed in 'Available games'. "
+    "Never mention games, studios, or prices that are not in that list. "
+    "Your output MUST follow this exact formatting:\n\n"
+    "1) Start with ONE short intro line.\n"
+    "2) Then list ALL matching games from Available games.\n"
+    "3) EACH GAME MUST BE ON ITS OWN LINE.\n"
+    "4) Format each line EXACTLY like this:\n"
+    "- Game Title ($Price)\n\n"
+    "STRICT RULES:\n"
+    "- NEVER put multiple games on the same line.\n"
+    "- NEVER merge lines.\n"
+    "- NEVER add explanations.\n"
+    "- NEVER add extra text.\n"
+    "- If no games match, respond ONLY with: No games found."
+)
 
 
 # -----------------------------
@@ -119,6 +142,28 @@ def fallback_recommendation(message, game_data):
 
 
 # -----------------------------
+# RAG → games for prompt (shop catalog only)
+# -----------------------------
+
+def _games_for_prompt(message, game_data_fallback):
+    if not settings.RAG_ENABLED:
+        return game_data_fallback
+
+    try:
+        from .rag.ingest import ensure_rag_index
+        from .rag.retrieve import retrieve_shop_games
+
+        ensure_rag_index()
+        retrieved = retrieve_shop_games(message)
+        if retrieved:
+            return retrieved
+    except Exception as exc:
+        logger.warning("RAG retrieval failed, using full catalog: %s", exc)
+
+    return game_data_fallback
+
+
+# -----------------------------
 # MAIN LLM FUNCTION
 # -----------------------------
 
@@ -131,9 +176,11 @@ def ask_llm(user, message, game_data):
     # Load memory
     memory_text = load_memory(user)
 
+    games_for_llm = _games_for_prompt(message, game_data)
+
     api_key = (settings.AI_API_KEY or "").strip()
     if not api_key or api_key == "your-openrouter-or-openai-key":
-        return fallback_recommendation(message, game_data)
+        return fallback_recommendation(message, games_for_llm)
 
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -147,21 +194,7 @@ def ask_llm(user, message, game_data):
         "messages": [
             {
                 "role": "system",
-                "content": (
-                    "You are a game recommendation assistant. "
-                    "Your output MUST follow this exact formatting:\n\n"
-                    "1) Start with ONE short intro line.\n"
-                    "2) Then list ALL matching games.\n"
-                    "3) EACH GAME MUST BE ON ITS OWN LINE.\n"
-                    "4) Format each line EXACTLY like this:\n"
-                    "- Game Title ($Price)\n\n"
-                    "STRICT RULES:\n"
-                    "- NEVER put multiple games on the same line.\n"
-                    "- NEVER merge lines.\n"
-                    "- NEVER add explanations.\n"
-                    "- NEVER add extra text.\n"
-                    "- If no games match, respond ONLY with: No games found."
-                )
+                "content": SHOP_ONLY_SYSTEM_RULES,
             },
             {
                 "role": "user",
@@ -174,8 +207,8 @@ Known preferences:
 Message:
 {message}
 
-Available games:
-{game_data}
+Available games (shop catalog only — RAG-retrieved):
+{games_for_llm}
 
 Respond following the strict formatting rules above.
 """

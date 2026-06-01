@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GamesPlay — Chatbot Architecture &amp; Documentation</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface2: #243044;
+      --border: #2d3a4f;
+      --text: #e7ecf3;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-dim: #2563eb33;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --code-bg: #0d1117;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    header .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    header .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .badge.accent { background: var(--accent-dim); color: #93c5fd; border-color: #3b82f655; }
+    .badge.no { background: #ef444422; color: #fca5a5; border-color: #ef444444; }
+    .badge.yes { background: #22c55e22; color: #86efac; border-color: #22c55e44; }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    section h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      font-size: 0.8rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 1.1rem 0 0.6rem;
+      color: #cbd5e1;
+    }
+
+    p { margin-bottom: 0.75rem; color: var(--text); }
+    p.muted { color: var(--muted); font-size: 0.9rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 0.75rem 0 1rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    code, .path {
+      font-family: "Cascadia Code", "Consolas", monospace;
+      font-size: 0.82em;
+      background: var(--code-bg);
+      padding: 0.12em 0.4em;
+      border-radius: 4px;
+      color: #7dd3fc;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin: 0.75rem 0 1rem;
+      color: #c9d1d9;
+    }
+
+    pre.flow { color: #a5d6ff; }
+
+    ul, ol {
+      margin: 0.5rem 0 1rem 1.25rem;
+      color: var(--text);
+    }
+
+    li { margin-bottom: 0.35rem; }
+
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-dim);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    .callout.warn {
+      border-left-color: var(--amber);
+      background: #f59e0b18;
+    }
+
+    .callout.danger {
+      border-left-color: var(--red);
+      background: #ef444418;
+    }
+
+    .diagram-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    .mermaid { text-align: center; }
+
+    #architecture .diagram-box {
+      background: #0d1117;
+    }
+
+    #architecture .mermaid svg {
+      background: #0d1117 !important;
+    }
+
+    #architecture .mermaid svg .nodeLabel foreignObject div,
+    #architecture .mermaid svg .cluster-label foreignObject div {
+      color: #f8fafc !important;
+      background: transparent !important;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      body { padding: 1rem; }
+    }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    a { color: #60a5fa; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>GamesPlay Chatbot</h1>
+      <p class="subtitle">Architecture, memory model, LLM integration, and limitations — Full-Stack Django REST + React</p>
+      <div class="badge-row">
+        <span class="badge accent">OpenRouter</span>
+        <span class="badge accent">gpt-4o-mini</span>
+        <span class="badge no">Not RAG</span>
+        <span class="badge yes">Preference memory</span>
+        <span class="badge">JWT required</span>
+      </div>
+    </header>
+
+  <section id="summary">
+    <h2><span class="num">1</span> High-level summary</h2>
+    <table>
+      <thead>
+        <tr><th>Question</th><th>Answer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>RAG?</strong></td><td><strong>No</strong> — no vector search, embeddings, or document index.</td></tr>
+        <tr><td><strong>How does it “know” games?</strong></td><td><strong>Full catalog in the prompt</strong> — every request loads all games from PostgreSQL and passes them to the LLM.</td></tr>
+        <tr><td><strong>Conversation history?</strong></td><td><strong>Partial</strong> — UI keeps chat in React state; backend does <strong>not</strong> send prior turns to the LLM.</td></tr>
+        <tr><td><strong>Long-term memory?</strong></td><td><strong>Yes, but narrow</strong> — <code>ChatMemory</code> stores <strong>preferences</strong> (budget, genre), not full dialogue.</td></tr>
+        <tr><td><strong>Which LLM?</strong></td><td><code>openai/gpt-4o-mini</code> via <a href="https://openrouter.ai/" target="_blank" rel="noopener">OpenRouter</a></td></tr>
+        <tr><td><strong>API key</strong></td><td><code>AI_API_KEY</code> in Django settings (OpenRouter key in production)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="rag">
+    <h2><span class="num">2</span> Is it RAG?</h2>
+    <p><strong>No — this is not RAG.</strong></p>
+    <p>Classic <strong>RAG</strong> = retrieve relevant chunks (embeddings + vector DB) → inject only those into the prompt.</p>
+    <p>What this project has instead:</p>
+    <pre class="flow">User message → Load ALL games from DB → Put entire list in one LLM prompt → Answer</pre>
+    <p>That is sometimes called <strong>“context stuffing”</strong> or <strong>in-context retrieval</strong>, not RAG.</p>
+
+    <h3>Implications</h3>
+    <ul>
+      <li>Works for a <strong>small catalog</strong> (tens / low hundreds of games).</li>
+      <li>Does <strong>not</strong> scale well if the catalog grows huge (token limits, cost, latency).</li>
+      <li>No semantic “find similar games” layer — the model filters from the full list in the prompt.</li>
+    </ul>
+
+    <div class="callout warn">
+      There is also a <strong>rule-based fallback</strong> (<code>fallback_recommendation</code>) when <code>AI_API_KEY</code> is missing: regex on budget/genre, filter/sort in Python, no LLM.
+    </div>
+  </section>
+
+  <section id="context">
+    <h2><span class="num">3</span> Does it keep conversation context?</h2>
+
+    <h3>A) Frontend (React) — UI chat only</h3>
+    <p><code>frontend_app/src/components/Chatbot/Chatbot.jsx</code> keeps <code>messages[]</code> in <strong>component state</strong>:</p>
+    <ul>
+      <li>Greeting when logged in.</li>
+      <li>Each user/bot turn appended locally.</li>
+      <li><strong>Lost on page refresh</strong> (not persisted to DB or <code>localStorage</code>).</li>
+      <li><strong>Not sent back</strong> to the server as history — only the <strong>latest</strong> <code>message</code> is POSTed.</li>
+    </ul>
+
+    <h3>B) Backend — no multi-turn LLM context</h3>
+    <p>Each <code>POST /api/chatbot/</code> call builds a <strong>fresh</strong> OpenRouter payload with:</p>
+    <ol>
+      <li><strong>System</strong> prompt (formatting rules for recommendations).</li>
+      <li><strong>One user</strong> block containing: user email, preference memory (text), current message, full <code>game_data</code> list.</li>
+    </ol>
+    <p>There are <strong>no</strong> prior <code>assistant</code> / <code>user</code> messages from earlier turns in that API call.</p>
+    <div class="callout">
+      The model does <strong>not</strong> “remember” what you said two messages ago, unless that fact was saved as a preference or you repeat it.
+    </div>
+
+    <h3>C) ChatMemory — preference memory, not chat log</h3>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>user</code></td><td>FK to <code>AppUser</code></td></tr>
+        <tr><td><code>key</code></td><td>e.g. <code>budget</code>, <code>preferred_genre</code></td></tr>
+        <tr><td><code>value</code></td><td>e.g. <code>50</code>, <code>Action</code></td></tr>
+        <tr><td><code>created_at</code></td><td>timestamp</td></tr>
+      </tbody>
+    </table>
+
+    <h3>How preferences are saved</h3>
+    <p><code>detect_and_save_preferences()</code> in <code>chatbot/services.py</code>:</p>
+    <ul>
+      <li>Regex detects <strong>budget</strong> in the user message → <code>save_memory(user, "budget", ...)</code>.</li>
+      <li>If message contains genre words → <code>save_memory(user, "preferred_genre", ...)</code>.</li>
+    </ul>
+    <div class="callout warn">
+      Each <code>save_memory</code> <strong>creates a new row</strong> — it does not update the old one. <code>load_memory</code> loads all rows and prints <code>key: value</code> lines, so duplicates are possible over time.
+    </div>
+
+    <h3>When memory is cleared</h3>
+    <ul>
+      <li><code>POST /api/chatbot/clear/</code> deletes all <code>ChatMemory</code> for that user.</li>
+      <li>Called from frontend <strong>on logout</strong> (<code>AuthContext.onLogout</code>).</li>
+    </ul>
+  </section>
+
+  <section id="llm">
+    <h2><span class="num">4</span> Which LLM and provider?</h2>
+    <table>
+      <thead>
+        <tr><th>Setting</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Provider</strong></td><td>OpenRouter</td></tr>
+        <tr><td><strong>Endpoint</strong></td><td><code>https://openrouter.ai/api/v1/chat/completions</code></td></tr>
+        <tr><td><strong>Model</strong></td><td><code>openai/gpt-4o-mini</code></td></tr>
+        <tr><td><strong>Auth</strong></td><td><code>Authorization: Bearer {AI_API_KEY}</code></td></tr>
+        <tr><td><strong>Timeout</strong></td><td>30 seconds</td></tr>
+        <tr><td><strong>Extra headers</strong></td><td><code>Referer</code>, <code>X-Title: GamesPlay Chatbot</code></td></tr>
+      </tbody>
+    </table>
+    <p>If <code>AI_API_KEY</code> is empty or placeholder → <strong>no LLM call</strong> → <code>fallback_recommendation()</code> runs in Python.</p>
+  </section>
+
+  <section id="api">
+    <h2><span class="num">5</span> API surface</h2>
+    <table>
+      <thead>
+        <tr><th>Method</th><th>Path</th><th>Auth</th><th>Behavior</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>POST</code></td><td><code>/api/chatbot/</code></td><td>JWT required</td><td>Chat + recommend</td></tr>
+        <tr><td><code>POST</code></td><td><code>/api/chatbot/clear/</code></td><td>JWT required</td><td>Wipe <code>ChatMemory</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Chat handler (ChatbotAPIView)</h3>
+    <pre>games = GameModel.objects.all().values("title", "summary", "price", "category")
+reply = ask_llm(user=user, message=message, game_data=list(games))
+return {"reply": reply}</pre>
+
+    <p><strong>FastAPI mirror</strong> (<code>/fast/api/chatbot/</code>) exists but is a <strong>stub</strong> (echo only) — production path is <strong>Django REST</strong>.</p>
+  </section>
+
+  <section id="architecture">
+    <h2><span class="num">6</span> Architecture (end-to-end)</h2>
+    <p class="muted">Solid lines = <strong>implemented today</strong>. Dashed amber boxes = <strong>planned RAG + external knowledge</strong> (not in code yet).</p>
+    <div class="diagram-box">
+      <pre class="mermaid" id="arch-diagram">
+flowchart TB
+    User((User))
+
+    classDef box fill:#1e293b,stroke:#60a5fa,color:#f8fafc,stroke-width:2px
+    classDef db fill:#172554,stroke:#93c5fd,color:#f8fafc,stroke-width:2px
+    classDef planned fill:#1e293b,stroke:#f59e0b,color:#fde68a,stroke-width:2px,stroke-dasharray:8 4
+
+    subgraph Frontend["React frontend_app"]
+        UI[Chatbot.jsx]
+        State[messages state - UI only]
+        Auth[AuthContext JWT]
+        ClearAPI[ClearAPI]
+        UI --> State
+        UI -->|POST message only| API
+        Auth -->|logout| ClearAPI
+    end
+
+    subgraph Backend["Django REST"]
+        API[POST /api/chatbot/]
+        Clear[POST /api/chatbot/clear/]
+        SVC[services.ask_llm]
+        Pref[detect_and_save_preferences]
+        Mem[(ChatMemory PostgreSQL)]
+        Games[(GameModel PostgreSQL)]
+    end
+
+    subgraph RAG["RAG layer — planned"]
+        Retrieve[retrieve_top_k]
+        Embed[embeddings + chunker]
+        Vec[(Vector index / pgvector)]
+        Ingest[ingest + sync job]
+    end
+
+    subgraph ExtKnow["External game knowledge — planned"]
+        ExtAPI[IGDB / RAWG / RSS feeds]
+    end
+
+    subgraph External["LLM provider"]
+        OR[OpenRouter API]
+        LLM[gpt-4o-mini]
+    end
+
+    Fallback[fallback_recommendation]
+
+    User -->|types message| UI
+
+    API --> Games
+    API --> SVC
+    SVC --> Pref --> Mem
+    SVC --> Mem
+    SVC -->|if AI_API_KEY set| OR --> LLM
+    SVC -->|else| Fallback
+    Clear --> Mem
+    ClearAPI --> Clear
+
+    Games -.->|index catalog chunks| Ingest
+    ExtAPI -.->|new releases genres trends| Ingest
+    Ingest -.-> Embed -.-> Vec
+    SVC -.->|semantic search| Retrieve
+    Retrieve -.-> Vec
+    Retrieve -.->|top-k context| SVC
+    SVC -.->|gap fill when DB thin| ExtAPI
+
+    class UI,State,Auth,ClearAPI,API,Clear,SVC,Pref,Fallback,OR,LLM,User box
+    class Mem,Games,Vec db
+    class Retrieve,Embed,Ingest,ExtAPI planned
+
+    style Frontend fill:#0f172a,stroke:#64748b,color:#e2e8f0,stroke-width:2px
+    style Backend fill:#0f172a,stroke:#64748b,color:#e2e8f0,stroke-width:2px
+    style RAG fill:#0f172a,stroke:#f59e0b,color:#fde68a,stroke-width:2px
+    style ExtKnow fill:#0f172a,stroke:#f59e0b,color:#fde68a,stroke-width:2px
+    style External fill:#0f172a,stroke:#64748b,color:#e2e8f0,stroke-width:2px
+      </pre>
+      <p class="muted" style="margin-top:0.75rem;font-size:0.85rem;text-align:center;">
+        RAG sits between <code>ask_llm</code> and both data stores: PostgreSQL catalog + external APIs → vector index → only relevant chunks go to the LLM.
+      </p>
+    </div>
+
+    <h3>Where RAG fits</h3>
+    <ul>
+      <li><strong>Today:</strong> <code>ask_llm</code> receives the <strong>entire</strong> <code>GameModel</code> list (context stuffing).</li>
+      <li><strong>With RAG:</strong> user message → <strong>embed query</strong> → <strong>retrieve top-k</strong> from vector index (DB catalog + synced external docs) → LLM prompt gets only those chunks + still can list DB games for price/stock.</li>
+      <li><strong>External knowledge:</strong> when PostgreSQL has no genre/release/trend data, ingest pipeline pulls from APIs/feeds, chunks, embeds, and retrieves at answer time.</li>
+    </ul>
+
+    <h3>Request flow — today vs with RAG</h3>
+    <pre class="flow">TODAY
+1. User → Chatbot.jsx → POST /api/chatbot/
+2. Load ALL games from PostgreSQL
+3. detect_and_save_preferences → ChatMemory
+4. load_memory → OpenRouter prompt (memory + message + full game list)
+
+WITH RAG (planned)
+1–3. Same as today
+4. retrieve_top_k(message) from vector index (catalog + external chunks)
+5. Optional: live fetch from external API if retrieval score is low / genre missing in DB
+6. OpenRouter prompt = memory + message + top-k chunks + DB games for pricing
+7. Return reply (cite “in store” vs “general industry info” in UI if desired)</pre>
+
+    <h3>External data — what you must provide vs what we can design</h3>
+    <table>
+      <thead>
+        <tr><th>You provide</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>API choice + keys</strong></td><td>e.g. <a href="https://api-docs.igdb.com/" target="_blank" rel="noopener">IGDB</a>, <a href="https://rawg.io/apidocs" target="_blank" rel="noopener">RAWG</a>, or your own CMS — keys stay in <code>.env</code>, not in git.</td></tr>
+        <tr><td><strong>Allowed sources</strong></td><td>Official APIs vs scraping (legal/terms differ).</td></tr>
+        <tr><td><strong>Sync schedule</strong></td><td>e.g. nightly job for “newest games / genres” vs on-demand per question.</td></tr>
+        <tr><td><strong>Answer policy</strong></td><td>Recommend <strong>only</strong> games in your shop, or also mention external titles with “not in store”?</td></tr>
+        <tr><td><strong>Budget</strong></td><td>Embedding + vector DB + extra LLM tokens (OpenRouter already configured).</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr><th>Can be designed in-repo without your keys</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>RAG module layout</td><td><code>chatbot/rag/ingest.py</code>, <code>retrieve.py</code>, Celery/cron sync.</td></tr>
+        <tr><td>Vector store</td><td><strong>pgvector</strong> on existing PostgreSQL is a natural fit.</td></tr>
+        <tr><td>Chunk schema</td><td>title, genre, release_date, summary, source=db|igdb|rawg.</td></tr>
+        <tr><td>Hybrid prompt</td><td>retrieved chunks + filtered <code>GameModel</code> rows so prices stay accurate.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <strong>Not implemented yet.</strong> The diagram shows the target shape; current code still uses full-catalog prompt only (see section 2).
+    </div>
+  </section>
+
+  <section id="components">
+    <h2><span class="num">7</span> Component map (backend)</h2>
+    <table>
+      <thead>
+        <tr><th>File</th><th>Role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>chatbot/api_views.py</code></td><td>HTTP entry, loads games, calls <code>ask_llm</code></td></tr>
+        <tr><td><code>chatbot/services.py</code></td><td>Memory, regex, fallback, OpenRouter call</td></tr>
+        <tr><td><code>chatbot/models.py</code></td><td><code>ChatMemory</code> table</td></tr>
+        <tr><td><code>chatbot/api_urls.py</code></td><td>Routes</td></tr>
+        <tr><td><code>settings.py</code></td><td><code>AI_API_KEY</code></td></tr>
+        <tr><td><code>frontend_app/.../Chatbot.jsx</code></td><td>UI + single-message API calls</td></tr>
+        <tr><td><code>AuthContext.js</code></td><td>Clear memory on logout</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="limits">
+    <h2><span class="num">8</span> Strengths and limits</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Strengths</h3>
+        <ul>
+          <li>Simple to understand and deploy.</li>
+          <li>Personalized-ish via stored budget/genre.</li>
+          <li>Safe fallback without API key.</li>
+          <li>JWT-protected endpoints.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Limits</h3>
+        <ul>
+          <li>Not RAG — no semantic search.</li>
+          <li>No true chat memory for LLM.</li>
+          <li>UI history is local only.</li>
+          <li>Preference rows can accumulate.</li>
+          <li>Cost/latency grows with catalog size.</li>
+          <li>FastAPI path not wired to real logic.</li>
+        </ul>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Limit</th><th>Detail</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Not RAG</td><td>No semantic search; whole catalog in prompt.</td></tr>
+        <tr><td>No true chat memory</td><td>LLM sees only current message + preferences, not prior Q&amp;A.</td></tr>
+        <tr><td>UI history is local</td><td>Refresh = chat UI resets.</td></tr>
+        <tr><td>Preference rows accumulate</td><td>Multiple <code>budget</code> rows possible.</td></tr>
+        <tr><td>Cost / latency</td><td>Grows with catalog size (all games every request).</td></tr>
+        <tr><td>FastAPI path</td><td>Not wired to real logic yet.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="future">
+    <h2><span class="num">9</span> If you wanted “real” RAG or full conversation later</h2>
+    <table>
+      <thead>
+        <tr><th>Goal</th><th>Typical change</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>RAG + external ingest</strong></td><td>Embeddings + pgvector; sync IGDB/RAWG (or similar); retrieve top-k per query — see section 6 diagram.</td></tr>
+        <tr><td><strong>Full conversation</strong></td><td>Store <code>ChatMessage</code> rows; send last N turns in <code>messages[]</code> to OpenRouter.</td></tr>
+        <tr><td><strong>Update preferences cleanly</strong></td><td><code>update_or_create</code> on <code>(user, key)</code> instead of always <code>create</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="bottom-line">
+    <h2><span class="num">10</span> Bottom line</h2>
+    <div class="callout">
+      The chatbot is a <strong>JWT-backed game recommender</strong> using <strong>OpenRouter + GPT-4o-mini</strong>, with <strong>full-catalog prompt context</strong> (not RAG), <strong>light preference memory in PostgreSQL</strong>, and <strong>UI-only chat history</strong> on the frontend — not full conversational context in the LLM.
+    </div>
+  </section>
+
+    <footer>
+      Generated documentation for GamesPlay marketplace · Project: Full-stack-online-games-marketplace-Django-REST-React-
+    </footer>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "dark",
+      themeVariables: {
+        background: "#0d1117",
+        primaryColor: "#1e293b",
+        primaryTextColor: "#f8fafc",
+        primaryBorderColor: "#60a5fa",
+        secondaryColor: "#1e293b",
+        secondaryTextColor: "#f8fafc",
+        tertiaryColor: "#0f172a",
+        tertiaryTextColor: "#f8fafc",
+        lineColor: "#94a3b8",
+        textColor: "#f8fafc",
+        mainBkg: "#1e293b",
+        nodeTextColor: "#f8fafc",
+        clusterBkg: "#0f172a",
+        clusterBorder: "#64748b",
+        titleColor: "#e2e8f0",
+        edgeLabelBackground: "#1e293b",
+        edgeLabelText: "#f8fafc"
+      }
+    });
+
+    function isLightFill(fill) {
+      if (!fill || fill === "none" || fill === "transparent") return false;
+      const f = fill.toLowerCase().replace(/\s/g, "");
+      if (f.includes("248,249,249") || f.includes("248,249,250")) return true;
+      if (f === "#f8f9f9" || f === "#f9fafb" || f === "#fff" || f === "#ffffff") return true;
+      if (f.startsWith("#f") && f.length <= 7) {
+        const hex = f.replace("#", "");
+        if (hex.length === 6) {
+          const r = parseInt(hex.slice(0, 2), 16);
+          const g = parseInt(hex.slice(2, 4), 16);
+          const b = parseInt(hex.slice(4, 6), 16);
+          return r > 200 && g > 200 && b > 200;
+        }
+      }
+      return false;
+    }
+
+    function fixArchitectureDiagram() {
+      const svg = document.querySelector("#architecture .mermaid svg");
+      if (!svg) return;
+
+      svg.style.setProperty("background", "#0d1117", "important");
+
+      svg.querySelectorAll(".node rect, .node path, .node polygon, .node circle, .node ellipse").forEach((shape) => {
+        const node = shape.closest(".node");
+        const isPlanned = node && (node.classList.contains("planned") || node.getAttribute("class")?.includes("planned"));
+        const stroke = isPlanned ? "#f59e0b" : "#60a5fa";
+        shape.setAttribute("fill", "#1e293b");
+        shape.setAttribute("stroke", stroke);
+        shape.style.setProperty("fill", "#1e293b", "important");
+        shape.style.setProperty("stroke", stroke, "important");
+      });
+
+      svg.querySelectorAll(".cluster > rect").forEach((shape) => {
+        shape.setAttribute("fill", "#0f172a");
+        shape.setAttribute("stroke", "#64748b");
+        shape.style.setProperty("fill", "#0f172a", "important");
+        shape.style.setProperty("stroke", "#64748b", "important");
+      });
+
+      svg.querySelectorAll(".edgeLabel rect").forEach((shape) => {
+        shape.setAttribute("fill", "#1e293b");
+        shape.style.setProperty("fill", "#1e293b", "important");
+      });
+
+      svg.querySelectorAll(".nodeLabel, .cluster-label").forEach((label) => {
+        label.querySelectorAll("p, span, div").forEach((el) => {
+          el.style.setProperty("color", "#f8fafc", "important");
+        });
+      });
+
+      svg.querySelectorAll(".node text, .cluster-label text, .edgeLabel text").forEach((t) => {
+        t.setAttribute("fill", "#f8fafc");
+        t.style.setProperty("fill", "#f8fafc", "important");
+      });
+
+      svg.querySelectorAll("rect, path, polygon, circle, ellipse").forEach((shape) => {
+        const fill = shape.getAttribute("fill") || shape.style.fill || "";
+        if (!isLightFill(fill)) return;
+        const inNode = shape.closest(".node");
+        const inCluster = shape.closest(".cluster");
+        const target = inNode ? "#1e293b" : inCluster ? "#0f172a" : "#1e293b";
+        shape.setAttribute("fill", target);
+        shape.style.setProperty("fill", target, "important");
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        await mermaid.run({ nodes: [document.getElementById("arch-diagram")] });
+      } catch (e) {
+        await mermaid.run({ querySelector: "#architecture .mermaid" });
+      }
+      fixArchitectureDiagram();
+      requestAnimationFrame(fixArchitectureDiagram);
+    });
+  </script>
+</body>
+</html>

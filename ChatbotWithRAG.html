@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GamesPlay — Chatbot with RAG (Architecture)</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface2: #243044;
+      --border: #2d3a4f;
+      --text: #e7ecf3;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-dim: #2563eb33;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --rag: #a78bfa;
+      --code-bg: #0d1117;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .wrap { max-width: 960px; margin: 0 auto; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    header .subtitle { color: var(--muted); font-size: 1rem; }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .badge.rag { background: #7c3aed33; color: #c4b5fd; border-color: #7c3aed55; }
+    .badge.live { background: #22c55e22; color: #86efac; border-color: #22c55e44; }
+    .badge.plan { background: #f59e0b22; color: #fde68a; border-color: #f59e0b44; }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    section h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      font-size: 0.8rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    section h2 .num.rag-num { background: #7c3aed; }
+
+    p { margin-bottom: 0.75rem; }
+    p.muted { color: var(--muted); font-size: 0.9rem; }
+
+    code {
+      font-family: "Cascadia Code", "Consolas", monospace;
+      font-size: 0.82em;
+      background: var(--code-bg);
+      padding: 0.12em 0.4em;
+      border-radius: 4px;
+      color: #7dd3fc;
+    }
+
+    pre.flow {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.82rem;
+      color: #a5d6ff;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+
+    .diagram-box {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    .mermaid { text-align: center; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem 1rem;
+      margin-top: 0.85rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+    .legend i {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .leg-live i { background: #1e293b; border: 2px solid #60a5fa; }
+    .leg-rag i { background: #1e293b; border: 2px dashed #a78bfa; }
+    .leg-db i { background: #172554; border: 2px solid #93c5fd; border-radius: 50%; }
+    .leg-plan i { background: #1e293b; border: 2px dashed #f59e0b; }
+
+    .callout {
+      border-left: 3px solid #7c3aed;
+      background: #7c3aed18;
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>GamesPlay Chatbot with RAG</h1>
+      <p class="subtitle">Visual guide — RAG flow, vector storage, and full-stack architecture (target design)</p>
+      <div class="badge-row">
+        <span class="badge rag">RAG</span>
+        <span class="badge live">Implemented today</span>
+        <span class="badge plan">RAG path = planned</span>
+        <span class="badge">pgvector on PostgreSQL</span>
+      </div>
+    </header>
+
+    <section id="rag-one-liner">
+      <h2><span class="num rag-num">★</span> RAG in one sentence</h2>
+      <div class="callout">
+        <strong>Search first, then generate.</strong> Turn data into chunks → store vectors → on each question find the closest chunks → send only those to the LLM (not the whole catalog).
+      </div>
+    </section>
+
+    <section id="flow-one-picture">
+      <h2><span class="num">1</span> Flow in one picture</h2>
+      <p class="muted">Offline indexing (prepare once) and online answering (every chat message).</p>
+      <div class="diagram-box">
+        <pre class="mermaid" id="flow-diagram">
+flowchart LR
+    classDef step fill:#1e293b,stroke:#60a5fa,color:#f8fafc,stroke-width:2px
+    classDef rag fill:#1e293b,stroke:#a78bfa,color:#e9d5ff,stroke-width:2px
+    classDef db fill:#172554,stroke:#93c5fd,color:#f8fafc,stroke-width:2px
+    classDef llm fill:#1e293b,stroke:#34d399,color:#ecfdf5,stroke-width:2px
+
+    subgraph OFFLINE["① OFFLINE — index once / sync daily"]
+        direction LR
+        G[(GameModel PostgreSQL)]
+        X[Optional RAWG / IGDB]
+        C[Chunk text]
+        E[Embedding API]
+        V[(pgvector table)]
+        G --> C
+        X --> C
+        C --> E --> V
+    end
+
+    subgraph ONLINE["② ONLINE — each user message"]
+        direction LR
+        U((User question))
+        Q[Embed question]
+        R[retrieve_top_k]
+        P[Build prompt]
+        L[OpenRouter LLM]
+        A[Reply to React]
+        U --> Q --> R
+        V --> R
+        R --> P
+        G2[(GameModel for prices)]
+        P --> L --> A
+        G2 --> P
+    end
+
+    class G,G2 db
+    class C,E,Q,R,P rag
+    class X step
+    class U,L,A llm
+    class V db
+
+    style OFFLINE fill:#0f172a,stroke:#64748b,color:#e2e8f0
+    style ONLINE fill:#0f172a,stroke:#64748b,color:#e2e8f0
+        </pre>
+        <div class="legend">
+          <span class="leg-db"><i></i> PostgreSQL</span>
+          <span class="leg-rag"><i></i> RAG steps</span>
+          <span class="leg-live"><i></i> App / LLM</span>
+        </div>
+      </div>
+      <pre class="flow">Game in DB → chunk text → embedding API → vector row in Postgres (pgvector)
+User asks "cheap action games" → embed question → find closest rows → those texts + DB prices → LLM → reply</pre>
+    </section>
+
+    <section id="vector-explained">
+      <h2><span class="num">2</span> What gets stored (not PyTorch tensors)</h2>
+      <div class="diagram-box">
+        <pre class="mermaid" id="table-diagram">
+flowchart TB
+    classDef tbl fill:#0f172a,stroke:#93c5fd,color:#f8fafc
+
+    subgraph TABLE["PostgreSQL — example rag_game_chunk table"]
+        direction TB
+        H["id | content text | embedding vector | source | game_id"]
+        R1["1 | Elden Ring. Action. $59.99... | 0.02, -0.15, 0.88... | db | 12"]
+        R2["2 | Civ VI. Strategy... | 0.11, 0.44, -0.03... | db | 7"]
+        R3["3 | 2026 shooters trend... | 0.05, 0.22, 0.91... | rawg | null"]
+    end
+
+    Q["User: cheap action games"] --> E2["embed → query vector"]
+    E2 --> S["nearest-neighbor search on embedding column"]
+    S --> R1
+    S --> R3
+
+    class H,R1,R2,R3,Q,E2,S tbl
+
+    style TABLE fill:#0f172a,stroke:#64748b,color:#e2e8f0
+        </pre>
+      </div>
+      <p class="muted">Each row = one <strong>text chunk</strong> + one <strong>list of floats</strong> (embedding). The DB finds rows closest to the question vector — like a smart filter, not a 2D image matrix for training.</p>
+    </section>
+
+    <section id="full-architecture">
+      <h2><span class="num">3</span> Whole app architecture (with RAG)</h2>
+      <p class="muted">Solid blue = live code today. Purple = RAG pipeline. Amber dashed = optional external APIs.</p>
+      <div class="diagram-box">
+        <pre class="mermaid" id="full-diagram">
+flowchart TB
+    User((User / Browser))
+
+    classDef box fill:#1e293b,stroke:#60a5fa,color:#f8fafc,stroke-width:2px
+    classDef db fill:#172554,stroke:#93c5fd,color:#f8fafc,stroke-width:2px
+    classDef rag fill:#1e293b,stroke:#a78bfa,color:#e9d5ff,stroke-width:2px
+    classDef plan fill:#1e293b,stroke:#f59e0b,color:#fde68a,stroke-width:2px,stroke-dasharray:8 4
+
+    subgraph FE["React — frontend_app"]
+        UI[Chatbot.jsx]
+        MSG[messages state UI only]
+        AUTH[AuthContext JWT]
+        SHOP[Games shop pages]
+        UI --> MSG
+    end
+
+    subgraph DJ["Django REST — backend"]
+        API["POST /api/chatbot/"]
+        CLR["POST /api/chatbot/clear/"]
+        ASK[services.ask_llm]
+        PREF[detect_and_save_preferences]
+        GAPI["/api/games/ ..."]
+        MEM[(ChatMemory)]
+        GAMES[(GameModel)]
+    end
+
+    subgraph RAGL["RAG layer"]
+        ING[ingest + chunker]
+        EMB[embedding API]
+        VEC[(pgvector)]
+        RET[retrieve_top_k]
+        ING --> EMB --> VEC
+        RET --> VEC
+    end
+
+    subgraph EXT["Optional external knowledge"]
+        RAWG[RAWG / IGDB API]
+    end
+
+    subgraph LLM["LLM"]
+        OR[OpenRouter]
+        GPT[gpt-4o-mini]
+        OR --> GPT
+    end
+
+    FB[fallback_recommendation]
+
+    User --> SHOP
+    User --> UI
+    UI -->|POST message + JWT| API
+    AUTH -->|logout| CLR
+
+    API --> ASK
+    ASK --> PREF --> MEM
+    ASK --> MEM
+    GAPI --> GAMES
+    API --> GAMES
+
+    GAMES --> ING
+    RAWG -.-> ING
+    ASK --> RET
+    RET --> ASK
+    ASK -->|top-k chunks + catalog| OR
+    ASK -->|no API key| FB
+
+    CLR --> MEM
+
+    class UI,MSG,AUTH,SHOP,API,CLR,ASK,PREF,GAPI,FB,OR,GPT,User box
+    class MEM,GAMES,VEC db
+    class ING,EMB,RET rag
+    class RAWG plan
+
+    style FE fill:#0f172a,stroke:#64748b,color:#e2e8f0
+    style DJ fill:#0f172a,stroke:#64748b,color:#e2e8f0
+    style RAGL fill:#0f172a,stroke:#a78bfa,color:#e9d5ff
+    style EXT fill:#0f172a,stroke:#f59e0b,color:#fde68a
+    style LLM fill:#0f172a,stroke:#34d399,color:#ecfdf5
+        </pre>
+        <div class="legend">
+          <span class="leg-live"><i></i> Implemented</span>
+          <span class="leg-rag"><i></i> RAG (target)</span>
+          <span class="leg-plan"><i></i> Optional API</span>
+          <span class="leg-db"><i></i> PostgreSQL</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare">
+      <h2><span class="num">4</span> Today vs with RAG</h2>
+      <div class="diagram-box">
+        <pre class="mermaid" id="compare-diagram">
+flowchart LR
+    classDef old fill:#1e293b,stroke:#64748b,color:#cbd5e1
+    classDef new fill:#1e293b,stroke:#a78bfa,color:#e9d5ff
+
+    subgraph TODAY["Today"]
+        T1[Load ALL games] --> T2[Whole list in prompt] --> T3[LLM]
+    end
+
+    subgraph RAGWAY["With RAG"]
+        R1[Embed question] --> R2[Top-k chunks from pgvector] --> R3[Small context + prices] --> R4[LLM]
+    end
+
+    class T1,T2,T3 old
+    class R1,R2,R3,R4 new
+
+    style TODAY fill:#0f172a,stroke:#64748b
+    style RAGWAY fill:#0f172a,stroke:#a78bfa
+        </pre>
+      </div>
+    </section>
+
+    <footer>
+      GamesPlay marketplace · See also <code>Chatbot_response.html</code> for current implementation details
+    </footer>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "dark",
+      themeVariables: {
+        background: "#0d1117",
+        primaryColor: "#1e293b",
+        primaryTextColor: "#f8fafc",
+        primaryBorderColor: "#60a5fa",
+        secondaryColor: "#1e293b",
+        secondaryTextColor: "#f8fafc",
+        lineColor: "#94a3b8",
+        textColor: "#f8fafc",
+        mainBkg: "#1e293b",
+        clusterBkg: "#0f172a",
+        clusterBorder: "#64748b",
+        titleColor: "#e2e8f0",
+        edgeLabelBackground: "#1e293b",
+        edgeLabelText: "#f8fafc"
+      }
+    });
+
+    function fixDiagrams() {
+      document.querySelectorAll(".diagram-box .mermaid svg").forEach((svg) => {
+        svg.style.setProperty("background", "#0d1117", "important");
+
+        svg.querySelectorAll(".node rect, .node path, .node polygon, .node circle, .node ellipse").forEach((shape) => {
+          const node = shape.closest(".node");
+          const cls = node?.getAttribute("class") || "";
+          let stroke = "#60a5fa";
+          if (cls.includes("rag")) stroke = "#a78bfa";
+          if (cls.includes("plan")) stroke = "#f59e0b";
+          if (cls.includes("db")) stroke = "#93c5fd";
+          shape.setAttribute("fill", "#1e293b");
+          shape.setAttribute("stroke", stroke);
+          shape.style.setProperty("fill", "#1e293b", "important");
+          shape.style.setProperty("stroke", stroke, "important");
+        });
+
+        svg.querySelectorAll(".cluster > rect").forEach((shape) => {
+          shape.setAttribute("fill", "#0f172a");
+          shape.setAttribute("stroke", "#64748b");
+          shape.style.setProperty("fill", "#0f172a", "important");
+        });
+
+        svg.querySelectorAll(".nodeLabel, .cluster-label").forEach((label) => {
+          label.querySelectorAll("p, span, div").forEach((el) => {
+            el.style.setProperty("color", "#f8fafc", "important");
+          });
+        });
+
+        svg.querySelectorAll(".node text, .cluster-label text, .edgeLabel text").forEach((t) => {
+          t.setAttribute("fill", "#f8fafc");
+          t.style.setProperty("fill", "#f8fafc", "important");
+        });
+
+        svg.querySelectorAll(".edgeLabel rect").forEach((shape) => {
+          shape.setAttribute("fill", "#1e293b");
+          shape.style.setProperty("fill", "#1e293b", "important");
+        });
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const nodes = Array.from(document.querySelectorAll(".mermaid"));
+      await mermaid.run({ nodes });
+      fixDiagrams();
+      requestAnimationFrame(fixDiagrams);
+    });
+  </script>
+</body>
+</html>
