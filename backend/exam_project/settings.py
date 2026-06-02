@@ -134,13 +134,21 @@ raw_origins = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
 CORS_ALLOWED_ORIGINS = []
 CSRF_TRUSTED_ORIGINS = []
 
+
+def _normalize_origin(origin: str, default_https: bool = False) -> str:
+    if origin.startswith("http://") or origin.startswith("https://"):
+        return origin
+    scheme = "https://" if default_https else "http://"
+    return scheme + origin
+
+
 for origin in raw_origins:
     origin = origin.strip()
     if not origin:
         continue
 
-    if not origin.startswith("http://") and not origin.startswith("https://"):
-        origin = "http://" + origin
+    # In production we default bare domains to HTTPS to match Azure ingress.
+    origin = _normalize_origin(origin, default_https=not DEBUG)
 
     CORS_ALLOWED_ORIGINS.append(origin)
     CSRF_TRUSTED_ORIGINS.append(origin)
@@ -150,8 +158,7 @@ extra_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 for origin in extra_csrf:
     origin = origin.strip()
     if origin:
-        if not origin.startswith("http://") and not origin.startswith("https://"):
-            origin = "https://" + origin
+        origin = _normalize_origin(origin, default_https=True)
         CSRF_TRUSTED_ORIGINS.append(origin)
 
 # ==========================
