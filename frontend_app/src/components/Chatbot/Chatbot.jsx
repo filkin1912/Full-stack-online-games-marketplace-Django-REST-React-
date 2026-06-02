@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import {useAuthContext} from "../../context/AuthContext";
 import {API_BASE_URL} from "../../config/api";
 
@@ -9,6 +9,7 @@ export const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [typing, setTyping] = useState(false);
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -25,6 +26,12 @@ export const Chatbot = () => {
             setTyping(false);
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (open) {
+            messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+        }
+    }, [messages, typing, open]);
 
     if (!isAuthenticated) return null;
 
@@ -94,6 +101,7 @@ export const Chatbot = () => {
                             <span></span><span></span><span></span>
                         </div>
                     )}
+                    <div ref={messagesEndRef}></div>
                 </div>
 
                 <div className="chatbot-input">

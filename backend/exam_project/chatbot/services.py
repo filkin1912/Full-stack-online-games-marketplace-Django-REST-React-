@@ -32,6 +32,7 @@ SHOP_ONLY_SYSTEM_RULES = (
 # -----------------------------
 
 def save_memory(user, key, value):
+    """Persist one extracted preference for a user."""
     ChatMemory.objects.create(
         user=user,
         key=key,
@@ -40,6 +41,7 @@ def save_memory(user, key, value):
 
 
 def load_memory(user):
+    """Build a compact text block of stored preferences for prompting."""
     memories = list(ChatMemory.objects.filter(user=user).values_list("key", "value"))
     if not memories:
         return "No stored preferences."
@@ -48,10 +50,12 @@ def load_memory(user):
 
 
 def clear_memory(user):
+    """Delete all remembered preferences for a user."""
     ChatMemory.objects.filter(user=user).delete()
 
 
 def detect_and_save_preferences(user, message):
+    """Extract simple budget/genre hints from a message and store them."""
     message_lower = message.lower()
 
     # Detect budget
@@ -67,6 +71,7 @@ def detect_and_save_preferences(user, message):
 
 
 def extract_budget(message):
+    """Return only the numeric budget value when one is detected."""
     budget_filter = extract_budget_filter(message)
     if budget_filter is None:
         return None
@@ -74,6 +79,7 @@ def extract_budget(message):
 
 
 def extract_budget_filter(message):
+    """Parse budget from text and mark whether comparison is inclusive."""
     message_lower = (message or "").lower()
     budget_patterns = (
         (r"(?:under|below|less than|cheaper than|price.*under|price.*below)\s*\$?\s*(\d+(?:\.\d+)?)", False),
@@ -96,6 +102,7 @@ def extract_budget_filter(message):
 
 
 def game_price(game):
+    """Return a safe float price for sorting/filtering."""
     try:
         return float(game.get("price") or 0)
     except (TypeError, ValueError):
@@ -103,6 +110,7 @@ def game_price(game):
 
 
 def matches_budget(game, budget, inclusive):
+    """Check whether a game passes the parsed budget rule."""
     price = game_price(game)
     if inclusive:
         return price <= budget
@@ -110,6 +118,7 @@ def matches_budget(game, budget, inclusive):
 
 
 def fallback_recommendation(message, game_data):
+    """Rule-based fallback when LLM/API key is unavailable."""
     message_lower = (message or "").lower()
     genres = ["action", "adventure", "puzzle", "strategy", "sports", "board", "other"]
     selected_genre = next((genre for genre in genres if genre in message_lower), None)
@@ -146,6 +155,7 @@ def fallback_recommendation(message, game_data):
 # -----------------------------
 
 def _games_for_prompt(message, game_data_fallback):
+    """Prefer RAG-retrieved shop games, otherwise use full catalog fallback."""
     if not settings.RAG_ENABLED:
         return game_data_fallback
 
@@ -168,6 +178,7 @@ def _games_for_prompt(message, game_data_fallback):
 # -----------------------------
 
 def ask_llm(user, message, game_data):
+    """Generate a shop-only chatbot reply with memory and RAG context."""
     url = "https://openrouter.ai/api/v1/chat/completions"
 
     # Detect and store preferences

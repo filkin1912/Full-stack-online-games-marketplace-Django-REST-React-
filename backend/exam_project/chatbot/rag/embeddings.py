@@ -7,10 +7,12 @@ logger = logging.getLogger(__name__)
 
 
 def _api_key():
+    """Return configured AI provider key with whitespace trimmed."""
     return (settings.AI_API_KEY or "").strip()
 
 
 def _headers():
+    """Build standard headers for OpenRouter requests."""
     return {
         "Authorization": f"Bearer {_api_key()}",
         "Content-Type": "application/json",
@@ -67,6 +69,7 @@ def embed_texts(texts):
 
 
 def embed_text(text):
+    """Embed a single text input and return one vector."""
     vectors = embed_texts([text])
     if not vectors:
         return None

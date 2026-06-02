@@ -16,7 +16,7 @@ from exam_project.common.models import BoughtGame
 from exam_project.games.models import GameModel
 
 router = APIRouter(
-    prefix="/fast/api/games",
+    prefix="/api/games",
     tags=["fast-games"],
 )
 

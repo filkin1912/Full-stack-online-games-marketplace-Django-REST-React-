@@ -1,5 +1,4 @@
 from pathlib import Path
-from datetime import timedelta
 from django.urls import reverse_lazy
 import os
 import sys
@@ -50,8 +49,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "widget_tweaks",
-    "rest_framework",
-    "rest_framework_simplejwt",
     "corsheaders",
 
     "cloudinary",
@@ -175,28 +172,6 @@ if USE_CLOUDINARY_MEDIA:
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-
-# ==========================
-# Django REST Framework
-# ==========================
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
-    ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 12,
-}
-
-# ==========================
-# JWT Settings
-# ==========================
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=200),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-}
 
 # ==========================
 # Password Validation

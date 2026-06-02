@@ -28,6 +28,8 @@ class GameEmbeddingChunk(models.Model):
 
 
 class ChatMemory(models.Model):
+    """Stores per-user key/value preferences extracted from chat."""
+
     user = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
@@ -44,4 +46,5 @@ class ChatMemory(models.Model):
         verbose_name_plural = "Chat Memories"
 
     def __str__(self):
+        """Show a readable user/key label in admin and shell."""
         return f"{self.user.email} - {self.key}"

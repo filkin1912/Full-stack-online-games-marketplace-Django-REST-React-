@@ -6,6 +6,7 @@ from .embeddings import embed_text
 
 
 def game_to_dict(game):
+    """Serialize a GameModel object to chatbot response fields."""
     return {
         "title": game.title,
         "summary": game.summary,

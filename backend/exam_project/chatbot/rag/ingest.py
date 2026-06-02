@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def build_chunk_text(game):
+    """Create the canonical embedding text payload for one game."""
     summary = (game.summary or "").strip() or "No summary."
     return (
         f"Title: {game.title}. "
@@ -20,6 +21,7 @@ def build_chunk_text(game):
 
 
 def upsert_game_chunk(game):
+    """Create or update the vector chunk row for a game."""
     content = build_chunk_text(game)
     vectors = embed_texts([content])
     if vectors is None:
@@ -72,4 +74,5 @@ def ensure_rag_index():
 
 @transaction.atomic
 def clear_rag_index():
+    """Delete all stored game embedding chunks."""
     GameEmbeddingChunk.objects.all().delete()

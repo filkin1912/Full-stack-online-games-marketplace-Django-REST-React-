@@ -10,7 +10,7 @@ from exam_project.common.models import GameComment
 from exam_project.games.models import GameModel
 
 router = APIRouter(
-    prefix="/fast/api/common",
+    prefix="/api/common",
     tags=["fast-common"],
 )
 
@@ -55,7 +55,7 @@ def serialize_comment(comment: GameComment) -> FastCommentOut:
 
 # ---------- Endpoints ----------
 
-# DRF: GET/POST /api/common/comments/<game_id>/
+# GET/POST /api/common/comments/<game_id>/
 @router.get("/comments/{game_id}/", response_model=List[FastCommentOut])
 async def list_comments(game_id: int):
     comments = await sync_to_async(list)(
@@ -75,7 +75,7 @@ async def create_comment(
         raise HTTPException(status_code=404, detail="Game not found")
 
     def _create():
-        # Mirrors DRF unique constraint behavior: one comment per user per game.
+        # Keep one-comment-per-user-per-game behavior.
         if GameComment.objects.filter(game_id=game_id, user=user).exists():
             raise HTTPException(status_code=400, detail="You have already commented on this game.")
 
@@ -91,7 +91,7 @@ async def create_comment(
     return serialize_comment(comment)
 
 
-# DRF: DELETE /api/common/comments/delete/<pk>/
+# DELETE /api/common/comments/delete/<pk>/
 @router.delete("/comments/delete/{pk}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_comment(pk: int, user: AppUser = Depends(get_current_user)):
     comment = await get_comment_or_404(pk)
